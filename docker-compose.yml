@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   stats-server:
-    build: ./statistic
+    build: ./statistic/stats-server
     restart: on-failure
     container_name: stats-server
     ports:
@@ -9,7 +9,7 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/share
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stats-db
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
@@ -21,7 +21,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=stats
+      - POSTGRES_DB=stats-db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
