@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   stats-server:
-    build: ./statistic/stats-server
+    build: ./ewm-stats
     restart: on-failure
     container_name: stats-server
     ports:
