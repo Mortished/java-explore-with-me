@@ -1,10 +1,11 @@
 package ru.practicum.stats.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.model.HitDTO;
 import ru.practicum.model.StatsDTO;
-import ru.practicum.stats.entity.Hit;
+import ru.practicum.stats.mapper.EntityMapper;
 import ru.practicum.stats.repository.HitsRepository;
 
 @RestController
@@ -24,7 +25,6 @@ import ru.practicum.stats.repository.HitsRepository;
 @Slf4j
 public class StatsController {
 
-  private final ModelMapper modelMapper = new ModelMapper();
   private final HitsRepository hitsRepository;
 
   /**
@@ -33,8 +33,8 @@ public class StatsController {
    */
   @PostMapping("/hit")
   public ResponseEntity<HitDTO> saveHit(@Valid @RequestBody HitDTO hitDTO) {
-    hitsRepository.save(modelMapper.map(hitDTO, Hit.class));
     log.info("POST /hit with body: {}", hitDTO);
+    hitsRepository.save(EntityMapper.toHit(hitDTO));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
@@ -48,10 +48,10 @@ public class StatsController {
    */
   @GetMapping("/stats")
   public List<StatsDTO> getStats(
-      @RequestParam String start,
-      @RequestParam String end,
+      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
       @RequestParam(required = false) List<String> uris,
-      @RequestParam(required = false) Boolean unique
+      @RequestParam(required = false, defaultValue = "false") Boolean unique
   ) {
     log.info("GET /stats params: start={}, end={}, uri={}, unique={}", start, end, uris, unique);
     return List.of(new StatsDTO("test", "url", 6L));
