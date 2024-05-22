@@ -1,6 +1,7 @@
 package ru.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,8 @@ public class HitDTO {
   private String ip;
 
   @PastOrPresent
+  @JsonProperty("timestamp")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime timestamp;
+  private LocalDateTime requestDateTime;
 
 }
