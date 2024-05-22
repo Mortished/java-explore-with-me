@@ -1,21 +1,16 @@
 package ru.practicum.model;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class StatsDTO {
 
-  @NotEmpty
   private String app;
-
-  @NotEmpty
   private String uri;
-
-  @PositiveOrZero
   private Long hits;
 
 }
