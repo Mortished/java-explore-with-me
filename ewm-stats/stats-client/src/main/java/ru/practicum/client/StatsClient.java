@@ -20,38 +20,17 @@ public class StatsClient extends BaseClient {
         .build());
   }
 
-  /**
-   * Сохранение информации о том, что к эндпоинту был запрос
-   *
-   * @param app             Идентификатор сервиса для которого записывается информация
-   * @param uri             URI для которого был осуществлен запрос
-   * @param ip              IP-адрес пользователя, осуществившего запрос
-   * @param requestDateTime Дата и время, когда был совершен запрос к эндпоинту
-   */
   public ResponseEntity<Object> hit(String app, String uri, String ip,
       LocalDateTime requestDateTime) {
     HitDTO body = new HitDTO(app, uri, ip, requestDateTime);
     return post(body);
   }
 
-  /**
-   * Получение статистики по посещениям.
-   *
-   * @param startDateTime Дата и время начала диапазона за который нужно выгрузить статистику
-   * @param endDateTime   Дата и время конца диапазона за который нужно выгрузить статистику
-   */
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime) {
     Map<String, Object> parameters = Map.of("start", startDateTime, "end", endDateTime);
     return get("/stats?start={start}&end={end}", parameters);
   }
 
-  /**
-   * Получение статистики по посещениям.
-   *
-   * @param startDateTime Дата и время начала диапазона за который нужно выгрузить статистику
-   * @param endDateTime   Дата и время конца диапазона за который нужно выгрузить статистику
-   * @param uris          Список uri для которых нужно выгрузить статистику
-   */
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
       List<String> uris) {
     Map<String, Object> parameters = Map.of(
@@ -62,14 +41,6 @@ public class StatsClient extends BaseClient {
     return get("/stats?start={start}&end={end}&uris={uris}", parameters);
   }
 
-  /**
-   * Получение статистики по посещениям.
-   *
-   * @param startDateTime Дата и время начала диапазона за который нужно выгрузить статистику
-   * @param endDateTime   Дата и время конца диапазона за который нужно выгрузить статистику
-   * @param uris          Список uri для которых нужно выгрузить статистику
-   * @param unique        Нужно ли учитывать только уникальные посещения (только с уникальным ip)
-   */
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
       List<String> uris, boolean unique) {
     Map<String, Object> parameters = Map.of(
@@ -81,13 +52,6 @@ public class StatsClient extends BaseClient {
     return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
   }
 
-  /**
-   * Получение статистики по посещениям.
-   *
-   * @param startDateTime Дата и время начала диапазона за который нужно выгрузить статистику
-   * @param endDateTime   Дата и время конца диапазона за который нужно выгрузить статистику
-   * @param unique        Нужно ли учитывать только уникальные посещения (только с уникальным ip)
-   */
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
       boolean unique) {
     Map<String, Object> parameters = Map.of(
