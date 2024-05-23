@@ -1,2 +1,14 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+
+## Sprint-18
+
+### 1. Подготовлена сборка проекта
+1. Собрать **.jar** проекта - `mvn clean package`
+2. Запустить приложение в контейнере - `docker compose up`
+
+### 2. Реализован сервис статистики c эндпоинтами:
+
+- `POST /hit`
+- `GET /stats`
+
+### 3. Реализован HTTP-клиент для работы с сервисом статистики
