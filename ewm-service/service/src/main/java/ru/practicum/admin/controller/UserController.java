@@ -1,13 +1,10 @@
 package ru.practicum.admin.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.admin.entity.User;
-import ru.practicum.admin.repository.UserRepository;
+import ru.practicum.admin.service.UserService;
 import ru.practicum.model.UserDTO;
 
 @RestController
@@ -30,21 +26,20 @@ import ru.practicum.model.UserDTO;
 @Slf4j
 public class UserController {
 
-  private final UserRepository userRepository;
-  private final ModelMapper modelMapper = new ModelMapper();
+  private final UserService userService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public void create(@Valid @RequestBody final UserDTO user) {
     log.info("POST /admin/users - with body: {}", user);
-    userRepository.save(modelMapper.map(user, User.class));
+    userService.save(user);
   }
 
   @DeleteMapping("/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable("userId") Long userId) {
     log.info("DELETE /admin/users/{userId} - with userId: {}", userId);
-    userRepository.deleteById(userId);
+    userService.delete(userId);
   }
 
   @GetMapping
@@ -54,10 +49,7 @@ public class UserController {
       @RequestParam(defaultValue = "10") @Min(1) final Integer size
   ) {
     log.info("GET /admin/users with params: [ids: {}, from: {}, size: {}]", ids, from, size);
-    PageRequest.ofSize(size);
-    return userRepository.findByIdIsIn(ids, PageRequest.of(from, size)).stream()
-        .map(user -> modelMapper.map(user, UserDTO.class))
-        .collect(Collectors.toList());
+    return userService.getUsers(ids, from, size);
   }
 
 }
