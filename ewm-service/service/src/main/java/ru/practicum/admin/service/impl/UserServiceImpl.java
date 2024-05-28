@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.admin.entity.User;
 import ru.practicum.admin.repository.UserRepository;
 import ru.practicum.admin.service.UserService;
+import ru.practicum.exception.UserNotFoundException;
 import ru.practicum.model.UserDTO;
 
 @Service
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void delete(Long userId) {
+    userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId.toString()));
     userRepository.deleteById(userId);
   }
 
