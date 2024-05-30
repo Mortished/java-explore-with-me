@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionHandlingControllerAdvice {
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-  private final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
+  private static final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(CategoryNotFoundException.class)
