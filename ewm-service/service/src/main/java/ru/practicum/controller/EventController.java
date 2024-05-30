@@ -1,4 +1,4 @@
-package ru.practicum.admin.controller;
+package ru.practicum.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,23 +12,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.admin.service.EventService;
 import ru.practicum.model.EventDTO;
 import ru.practicum.model.EventRequestDTO;
+import ru.practicum.service.EventService;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/admin/events")
 @Validated
 @Slf4j
 public class EventController {
 
   private final EventService eventService;
 
-  @GetMapping()
+  @GetMapping("/admin/events")
   List<EventDTO> findEvents(
       @RequestParam(required = false) List<Long> users,
       @RequestParam(required = false) List<String> states,
@@ -38,11 +36,15 @@ public class EventController {
       @RequestParam(required = false) @Min(0) Integer from,
       @RequestParam(required = false) @Min(1) Integer size
   ) {
+    log.info(
+        "GET /admin/events: users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
+        users, states, categories, rangeStart, rangeEnd, from, size);
     return eventService.findByParams(users, states, categories, rangeStart, rangeEnd, from, size);
   }
 
-  @PatchMapping("/{eventId}")
+  @PatchMapping("/admin/events/{eventId}")
   EventDTO updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventRequestDTO body) {
+    log.info("PATCH /admin/events/{eventId}: eventId={}, body={}", eventId, body);
     return eventService.update(eventId, body);
   }
 

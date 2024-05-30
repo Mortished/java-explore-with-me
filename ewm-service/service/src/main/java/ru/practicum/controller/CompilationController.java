@@ -1,4 +1,4 @@
-package ru.practicum.admin.controller;
+package ru.practicum.controller;
 
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -9,15 +9,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.admin.service.CompilationService;
 import ru.practicum.model.CompilationDTO;
 import ru.practicum.model.CompilationRequestDTO;
+import ru.practicum.service.CompilationService;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/admin/compilations")
 @Validated
 @Slf4j
 public class CompilationController {
@@ -26,17 +24,20 @@ public class CompilationController {
 
   @PostMapping
   public CompilationDTO save(@Valid @RequestBody final CompilationRequestDTO body) {
+    log.info("POST /admin/compilations: {}", body);
     return compilationService.save(body);
   }
 
-  @PatchMapping("/{compId}")
+  @PatchMapping("/admin/compilations/{compId}")
   public CompilationDTO update(@PathVariable Long compId,
       @Valid @RequestBody final CompilationRequestDTO body) {
+    log.info("PATCH /admin/compilations/{compId} : compId={}, body={}", compId, body);
     return compilationService.update(compId, body);
   }
 
-  @DeleteMapping("/{compId}")
+  @DeleteMapping("/admin/compilations/{compId}")
   public void delete(@PathVariable Long compId) {
+    log.info("DELETE /admin/compilations/{compId}: compId={}", compId);
     compilationService.delete(compId);
   }
 

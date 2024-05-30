@@ -1,15 +1,15 @@
-package ru.practicum.admin.service.impl;
+package ru.practicum.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.entity.User;
-import ru.practicum.admin.repository.UserRepository;
-import ru.practicum.admin.service.UserService;
+import ru.practicum.entity.User;
 import ru.practicum.exception.UserNotFoundException;
 import ru.practicum.model.UserDTO;
+import ru.practicum.repository.UserRepository;
+import ru.practicum.service.UserService;
 
 @Service
 @AllArgsConstructor

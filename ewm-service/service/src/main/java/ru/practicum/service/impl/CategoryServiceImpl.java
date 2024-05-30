@@ -1,13 +1,13 @@
-package ru.practicum.admin.service.impl;
+package ru.practicum.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.entity.Category;
-import ru.practicum.admin.repository.CategoryRepository;
-import ru.practicum.admin.service.CategoryService;
+import ru.practicum.entity.Category;
 import ru.practicum.exception.CategoryNotFoundException;
 import ru.practicum.model.CategoryDTO;
+import ru.practicum.repository.CategoryRepository;
+import ru.practicum.service.CategoryService;
 
 @Service
 @AllArgsConstructor

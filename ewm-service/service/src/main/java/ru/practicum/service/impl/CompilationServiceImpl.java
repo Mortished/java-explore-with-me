@@ -1,12 +1,12 @@
-package ru.practicum.admin.service.impl;
+package ru.practicum.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.repository.CompilationRepository;
-import ru.practicum.admin.service.CompilationService;
 import ru.practicum.exception.CompilationNotFoundException;
 import ru.practicum.model.CompilationDTO;
 import ru.practicum.model.CompilationRequestDTO;
+import ru.practicum.repository.CompilationRepository;
+import ru.practicum.service.CompilationService;
 
 @Service
 @AllArgsConstructor

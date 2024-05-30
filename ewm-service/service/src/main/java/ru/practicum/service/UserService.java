@@ -1,4 +1,4 @@
-package ru.practicum.admin.service;
+package ru.practicum.service;
 
 import java.util.List;
 import ru.practicum.model.UserDTO;

@@ -1,13 +1,13 @@
-package ru.practicum.admin.service.impl;
+package ru.practicum.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.repository.EventRepository;
-import ru.practicum.admin.service.EventService;
 import ru.practicum.model.EventDTO;
 import ru.practicum.model.EventRequestDTO;
+import ru.practicum.repository.EventRepository;
+import ru.practicum.service.EventService;
 
 @Service
 @AllArgsConstructor

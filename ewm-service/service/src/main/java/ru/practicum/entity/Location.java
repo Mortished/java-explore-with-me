@@ -1,6 +1,5 @@
-package ru.practicum.admin.entity;
+package ru.practicum.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,16 +13,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "event_location")
+public class Location {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
 
-  private String name;
+  private Double lat;
 
-  @Column(unique = true, nullable = false)
-  private String email;
+  private Double lon;
 
 }

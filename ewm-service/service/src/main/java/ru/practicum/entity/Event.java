@@ -1,4 +1,4 @@
-package ru.practicum.admin.entity;
+package ru.practicum.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;

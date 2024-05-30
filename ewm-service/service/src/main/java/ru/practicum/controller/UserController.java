@@ -1,4 +1,4 @@
-package ru.practicum.admin.controller;
+package ru.practicum.controller;
 
 import java.util.List;
 import javax.validation.Valid;
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.admin.service.UserService;
 import ru.practicum.model.UserDTO;
+import ru.practicum.service.UserService;
 
 @RestController
 @AllArgsConstructor
