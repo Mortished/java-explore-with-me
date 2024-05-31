@@ -1,6 +1,6 @@
 package ru.practicum.service;
 
-import ru.practicum.model.CategoryDTO;
+import ru.practicum.model.dto.CategoryDTO;
 
 public interface CategoryService {
 

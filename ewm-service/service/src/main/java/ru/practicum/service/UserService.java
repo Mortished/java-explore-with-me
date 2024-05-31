@@ -1,7 +1,7 @@
 package ru.practicum.service;
 
 import java.util.List;
-import ru.practicum.model.UserDTO;
+import ru.practicum.model.dto.UserDTO;
 
 public interface UserService {
 

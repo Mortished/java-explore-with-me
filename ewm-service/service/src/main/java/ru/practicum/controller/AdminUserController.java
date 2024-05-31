@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.model.UserDTO;
+import ru.practicum.model.dto.UserDTO;
 import ru.practicum.service.UserService;
 
 @RestController
@@ -24,7 +24,7 @@ import ru.practicum.service.UserService;
 @RequestMapping("/admin/users")
 @Validated
 @Slf4j
-public class UserController {
+public class AdminUserController {
 
   private final UserService userService;
 

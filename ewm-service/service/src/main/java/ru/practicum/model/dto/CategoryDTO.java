@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.model.dto;
 
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;

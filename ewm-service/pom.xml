@@ -12,7 +12,6 @@
   <artifactId>ewm-service</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>model</module>
     <module>service</module>
   </modules>
 

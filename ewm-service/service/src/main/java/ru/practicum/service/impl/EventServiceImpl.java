@@ -1,11 +1,14 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.Dictionary.EVENT_NAME;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.model.EventDTO;
-import ru.practicum.model.EventRequestDTO;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.dto.EventDTO;
+import ru.practicum.model.dto.EventRequestDTO;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.service.EventService;
 
@@ -23,6 +26,8 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public EventDTO update(Long eventId, EventRequestDTO body) {
+    eventRepository.findById(eventId)
+        .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
     return null;
   }
 

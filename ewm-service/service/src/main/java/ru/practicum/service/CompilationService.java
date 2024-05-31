@@ -1,7 +1,7 @@
 package ru.practicum.service;
 
-import ru.practicum.model.CompilationDTO;
-import ru.practicum.model.CompilationRequestDTO;
+import ru.practicum.model.dto.CompilationDTO;
+import ru.practicum.model.dto.CompilationRequestDTO;
 
 public interface CompilationService {
 

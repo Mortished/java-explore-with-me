@@ -2,8 +2,8 @@ package ru.practicum.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import ru.practicum.model.EventDTO;
-import ru.practicum.model.EventRequestDTO;
+import ru.practicum.model.dto.EventDTO;
+import ru.practicum.model.dto.EventRequestDTO;
 
 public interface EventService {
 

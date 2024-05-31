@@ -1,13 +1,15 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.Dictionary.USER_NAME;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.practicum.entity.User;
-import ru.practicum.exception.UserNotFoundException;
-import ru.practicum.model.UserDTO;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.model.dto.UserDTO;
 import ru.practicum.repository.UserRepository;
 import ru.practicum.service.UserService;
 
@@ -25,7 +27,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void delete(Long userId) {
-    userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId.toString()));
+    userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
     userRepository.deleteById(userId);
   }
 

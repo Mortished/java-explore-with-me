@@ -12,21 +12,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.model.EventDTO;
-import ru.practicum.model.EventRequestDTO;
+import ru.practicum.model.dto.EventDTO;
+import ru.practicum.model.dto.EventRequestDTO;
 import ru.practicum.service.EventService;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/admin/events")
 @Validated
 @Slf4j
-public class EventController {
+public class AdminEventController {
 
   private final EventService eventService;
 
-  @GetMapping("/admin/events")
+  @GetMapping
   List<EventDTO> findEvents(
       @RequestParam(required = false) List<Long> users,
       @RequestParam(required = false) List<String> states,
@@ -42,7 +44,7 @@ public class EventController {
     return eventService.findByParams(users, states, categories, rangeStart, rangeEnd, from, size);
   }
 
-  @PatchMapping("/admin/events/{eventId}")
+  @PatchMapping("/{eventId}")
   EventDTO updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventRequestDTO body) {
     log.info("PATCH /admin/events/{eventId}: eventId={}, body={}", eventId, body);
     return eventService.update(eventId, body);

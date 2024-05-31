@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.model.dto;
 
 import java.util.List;
 import javax.validation.constraints.NotNull;

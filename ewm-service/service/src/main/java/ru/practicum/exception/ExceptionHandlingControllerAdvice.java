@@ -16,8 +16,8 @@ public class ExceptionHandlingControllerAdvice {
   private static final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  @ExceptionHandler(CategoryNotFoundException.class)
-  public ErrorResponse handleValidationExceptions(CategoryNotFoundException ex) {
+  @ExceptionHandler(NotFoundException.class)
+  public ErrorResponse handleValidationExceptions(NotFoundException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.NOT_FOUND.name())
         .reason(OBJECT_NOT_FOUND_REASON)
