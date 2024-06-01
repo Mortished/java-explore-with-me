@@ -2,6 +2,8 @@ package ru.practicum.service.impl;
 
 import static ru.practicum.utils.Dictionary.CATEGORY_NAME;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -39,4 +41,19 @@ public class CategoryServiceImpl implements CategoryService {
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, catId.toString()));
     categoryRepository.deleteById(catId);
   }
+
+  @Override
+  public List<CategoryDTO> findAll(Integer from, Integer size) {
+    return categoryRepository.findAllWithPaging(from, size).stream()
+        .map(it -> modelMapper.map(it, CategoryDTO.class))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public CategoryDTO findById(Long catId) {
+    Category category = categoryRepository.findById(catId)
+        .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, catId.toString()));
+    return modelMapper.map(category, CategoryDTO.class);
+  }
+
 }
