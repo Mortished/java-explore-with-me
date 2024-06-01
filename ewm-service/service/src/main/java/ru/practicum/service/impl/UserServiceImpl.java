@@ -18,7 +18,7 @@ import ru.practicum.service.UserService;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
-  private final ModelMapper modelMapper = new ModelMapper();
+  private final ModelMapper modelMapper;
 
   @Override
   public void save(UserDTO user) {

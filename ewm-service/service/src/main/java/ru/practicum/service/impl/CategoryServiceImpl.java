@@ -16,7 +16,7 @@ import ru.practicum.service.CategoryService;
 public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
-  private final ModelMapper modelMapper = new ModelMapper();
+  private final ModelMapper modelMapper;
 
   @Override
   public CategoryDTO save(CategoryDTO category) {

@@ -14,6 +14,7 @@ public class ExceptionHandlingControllerAdvice {
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
   private static final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
+  private static final String UPDATE_CONFLICT_REASON = "For the requested operation the conditions are not met.";
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
@@ -32,6 +33,17 @@ public class ExceptionHandlingControllerAdvice {
     return ErrorResponse.builder()
         .status(HttpStatus.CONFLICT.name())
         .reason("Integrity constraint has been violated.")
+        .message(ex.getMessage())
+        .timestamp(LocalDateTime.now().format(formatter))
+        .build();
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(EventUpdateConflictException.class)
+  public ErrorResponse handleValidationExceptions(EventUpdateConflictException ex) {
+    return ErrorResponse.builder()
+        .status(HttpStatus.CONFLICT.name())
+        .reason(UPDATE_CONFLICT_REASON)
         .message(ex.getMessage())
         .timestamp(LocalDateTime.now().format(formatter))
         .build();
