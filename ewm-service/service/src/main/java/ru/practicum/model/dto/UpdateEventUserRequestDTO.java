@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.model.AdminEventRequestStatus;
+import ru.practicum.model.UserEventRequestStatus;
 
 @Data
-public class AdminEventRequestDTO {
+public class UpdateEventUserRequestDTO {
 
   @Length(min = 20, max = 2000)
   private String annotation;
@@ -30,7 +30,7 @@ public class AdminEventRequestDTO {
 
   private Boolean requestModeration;
 
-  private AdminEventRequestStatus stateAction;
+  private UserEventRequestStatus stateAction;
 
   @Length(min = 3, max = 120)
   private String title;

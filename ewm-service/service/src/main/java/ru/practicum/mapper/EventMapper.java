@@ -6,13 +6,13 @@ import ru.practicum.entity.Event;
 import ru.practicum.entity.Location;
 import ru.practicum.model.AdminEventRequestStatus;
 import ru.practicum.model.Status;
-import ru.practicum.model.dto.AdminEventRequestDTO;
+import ru.practicum.model.dto.UpdateEventAdminRequestDTO;
 
 public class EventMapper {
 
   private static final ModelMapper modelMapper = new ModelMapper();
 
-  public static Event toEvent(AdminEventRequestDTO dto, Category category) {
+  public static Event toEvent(UpdateEventAdminRequestDTO dto, Category category) {
     return Event.builder()
         .annotation(dto.getAnnotation())
         .category(category)

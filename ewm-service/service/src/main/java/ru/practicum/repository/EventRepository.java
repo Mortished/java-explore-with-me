@@ -20,4 +20,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
   @Query(value = "SELECT * FROM events LIMIT ?2 OFFSET ?1", nativeQuery = true)
   List<Event> findAllWithPaging(Integer from, Integer size);
+
+  @Query(value = "SELECT * FROM events WHERE user_id = ?1 LIMIT ?3 OFFSET ?2", nativeQuery = true)
+  List<Event> findAllByUserId(Long userId, Integer from, Integer size);
+
 }
