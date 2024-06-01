@@ -14,6 +14,7 @@ import ru.practicum.entity.Event;
 import ru.practicum.exception.EventUpdateConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
+import ru.practicum.model.EventSortType;
 import ru.practicum.model.Status;
 import ru.practicum.model.dto.AdminEventRequestDTO;
 import ru.practicum.model.dto.EventDTO;
@@ -46,6 +47,14 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public List<EventDTO> findByParams(String text, List<Long> categories, Boolean paid,
+      LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
+      Integer from, Integer size) {
+    //TODO Реализовать логику выборки и маппинг параметров
+    return List.of();
+  }
+
+  @Override
   public EventDTO update(Long eventId, AdminEventRequestDTO body) {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
@@ -63,6 +72,14 @@ public class EventServiceImpl implements EventService {
 
     return modelMapper.map(eventRepository.save(EventMapper.toEvent(body, category)),
         EventDTO.class);
+  }
+
+  @Override
+  public EventDTO findById(Long eventId) {
+    Event event = eventRepository.findById(eventId)
+        .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
+    //TODO Реализиовать логику выборки
+    return null;
   }
 
 }
