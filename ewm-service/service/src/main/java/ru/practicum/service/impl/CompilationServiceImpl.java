@@ -62,4 +62,23 @@ public class CompilationServiceImpl implements CompilationService {
     compilationRepository.deleteById(compId);
   }
 
+  @Override
+  public List<CompilationDTO> findAllWithParams(Boolean pinned, Integer from, Integer size) {
+    if (pinned != null) {
+      return compilationRepository.findAllWithParams(pinned, from, size).stream()
+          .map(it -> modelMapper.map(it, CompilationDTO.class))
+          .collect(Collectors.toList());
+    }
+    return compilationRepository.findAllWithPaging(from, size).stream()
+        .map(it -> modelMapper.map(it, CompilationDTO.class))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public CompilationDTO findById(Long compId) {
+    Compilation compilation = compilationRepository.findById(compId)
+        .orElseThrow(() -> new NotFoundException(COMPILATION_NAME, compId.toString()));
+    return modelMapper.map(compilation, CompilationDTO.class);
+  }
+
 }
