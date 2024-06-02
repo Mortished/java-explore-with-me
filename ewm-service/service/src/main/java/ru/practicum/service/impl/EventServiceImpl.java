@@ -124,7 +124,6 @@ public class EventServiceImpl implements EventService {
       event = EventMapper.toEvent(body, category);
     } catch (JsonProcessingException e) {
       log.warn(e.getMessage());
-      throw new EventUpdateConflictException();
     }
     event.setInitiator(user);
     event.setCreatedOn(LocalDateTime.now());
@@ -136,9 +135,16 @@ public class EventServiceImpl implements EventService {
       event.setPublishedOn(LocalDateTime.now());
     }
 
-    Event result = eventRepository.save(event);
+    Event result = eventRepository.saveAndFlush(event);
 
-    return EventMapper.toEventFullDTO(result);
+    EventFullDTO fullDTO = null;
+    try {
+      fullDTO = EventMapper.toEventFullDTO(result);
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
+    }
+
+    return fullDTO;
   }
 
   @Override

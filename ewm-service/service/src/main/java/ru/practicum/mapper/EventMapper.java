@@ -53,7 +53,7 @@ public class EventMapper {
         .build();
   }
 
-  public static EventFullDTO toEventFullDTO(Event event) {
+  public static EventFullDTO toEventFullDTO(Event event) throws JsonProcessingException {
     return EventFullDTO.builder()
         .annotation(event.getAnnotation())
         .category(modelMapper.map(event.getCategory(), CategoryDTO.class))
@@ -63,8 +63,7 @@ public class EventMapper {
         .eventDate(event.getEventDate())
         .id(event.getId())
         .initiator(modelMapper.map(event.getInitiator(), UserDTO.class))
-        .location(modelMapper.map(event.getLocation(),
-            LocationDTO.class)) //возможно не будет работать objectMapper.readValue(event.getLocation(), LocationDTO.class)
+        .location(modelMapper.map(objectMapper.readValue(event.getLocation(), LocationDTO.class), LocationDTO.class)) //возможно не будет работать
         .paid(event.isPaid())
         .participantLimit(event.getParticipantLimit())
         .publishedOn(event.getPublishedOn())
