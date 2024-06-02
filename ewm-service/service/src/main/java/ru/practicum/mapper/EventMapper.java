@@ -63,7 +63,7 @@ public class EventMapper {
         .eventDate(event.getEventDate())
         .id(event.getId())
         .initiator(modelMapper.map(event.getInitiator(), UserDTO.class))
-        .location(modelMapper.map(objectMapper.readValue(event.getLocation(), LocationDTO.class), LocationDTO.class)) //возможно не будет работать
+        .location(modelMapper.map(objectMapper.readValue(event.getLocation(), LocationDTO.class), LocationDTO.class))
         .paid(event.isPaid())
         .participantLimit(event.getParticipantLimit())
         .publishedOn(event.getPublishedOn())

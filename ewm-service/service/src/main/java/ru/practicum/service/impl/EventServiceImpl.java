@@ -5,6 +5,7 @@ import static ru.practicum.utils.Dictionary.EVENT_NAME;
 import static ru.practicum.utils.Dictionary.USER_NAME;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.model.EventSortType;
 import ru.practicum.model.EventStatus;
+import ru.practicum.model.UserEventRequestStatus;
 import ru.practicum.model.dto.EventFullDTO;
 import ru.practicum.model.dto.EventShortDTO;
 import ru.practicum.model.dto.NewEventDTO;
@@ -40,22 +42,21 @@ public class EventServiceImpl implements EventService {
   private final CategoryRepository categoryRepository;
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
+  private final ObjectMapper objectMapper;
 
   @Override
   public List<EventFullDTO> findByParams(List<Long> users, List<String> states,
-      List<Long> categories,
-      LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
+      List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
+      Integer size) {
     if (users != null && states != null && categories != null && rangeStart != null
         && rangeEnd != null) {
       return eventRepository.findByAllParams(users, states, categories, rangeStart, rangeEnd, from,
-              size).stream()
-          .map(it -> modelMapper.map(it, EventFullDTO.class))
+              size).stream().map(it -> modelMapper.map(it, EventFullDTO.class))
           .collect(Collectors.toList());
     }
     //TODO Добавить остальные варианты выборки
     return eventRepository.findAllWithPaging(from, size).stream()
-        .map(it -> modelMapper.map(it, EventFullDTO.class))
-        .collect(Collectors.toList());
+        .map(it -> modelMapper.map(it, EventFullDTO.class)).collect(Collectors.toList());
   }
 
   @Override
@@ -104,8 +105,7 @@ public class EventServiceImpl implements EventService {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
     return eventRepository.findAllByUserId(userId, from, size).stream()
-        .map(it -> modelMapper.map(it, EventShortDTO.class))
-        .collect(Collectors.toList());
+        .map(it -> modelMapper.map(it, EventShortDTO.class)).collect(Collectors.toList());
   }
 
   @Override
@@ -127,13 +127,7 @@ public class EventServiceImpl implements EventService {
     }
     event.setInitiator(user);
     event.setCreatedOn(LocalDateTime.now());
-
-    if (event.isRequestModeration()) {
-      event.setState(EventStatus.PENDING);
-    } else {
-      event.setState(EventStatus.PUBLISHED);
-      event.setPublishedOn(LocalDateTime.now());
-    }
+    event.setState(EventStatus.PENDING);
 
     Event result = eventRepository.saveAndFlush(event);
 
@@ -151,22 +145,69 @@ public class EventServiceImpl implements EventService {
   public EventFullDTO findUserEventById(Long userId, Long eventId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
+
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
+
     if (!event.getInitiator().equals(user)) {
-      //TODO ошибка что переданный юзер != юзеру из ивента
+      log.warn("Юзер из запроса != юзеру события");
+      throw new NotFoundException(EVENT_NAME, eventId.toString());
     }
-    return modelMapper.map(event, EventFullDTO.class);
+    EventFullDTO fullDTO = null;
+    try {
+      fullDTO = EventMapper.toEventFullDTO(event);
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
+    }
+
+    return fullDTO;
   }
 
   @Override
   public EventFullDTO updateUserEvent(Long userId, Long eventId, UpdateEventUserRequestDTO body) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
+
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
-    //TODO маппинг в Event и сохранение с обратным преобразованием в DTO
-    return null;
+
+    Category category = categoryRepository.findById(body.getCategory())
+        .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
+
+    if (event.getState().equals(EventStatus.PUBLISHED) || checkEventDate(body.getEventDate())) {
+      throw new EventUpdateConflictException();
+    }
+
+    event.setAnnotation(body.getAnnotation());
+    event.setCategory(category);
+    event.setDescription(body.getDescription());
+    event.setEventDate(body.getEventDate());
+    event.setPaid(body.getPaid());
+    event.setParticipantLimit(body.getParticipantLimit());
+    event.setTitle(body.getTitle());
+
+    try {
+      event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
+    }
+
+    if (body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW)) {
+      event.setState(EventStatus.CANCELED);
+    } else {
+      event.setState(EventStatus.PENDING);
+    }
+
+    Event result = eventRepository.saveAndFlush(event);
+
+    EventFullDTO fullDTO = null;
+    try {
+      fullDTO = EventMapper.toEventFullDTO(result);
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
+    }
+
+    return fullDTO;
   }
 
   private boolean checkEventDate(LocalDateTime eventDate) {
