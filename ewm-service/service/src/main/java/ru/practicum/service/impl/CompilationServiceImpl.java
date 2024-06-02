@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.entity.Compilation;
 import ru.practicum.entity.Event;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.model.dto.CompilationDTO;
 import ru.practicum.model.dto.CompilationRequestDTO;
 import ru.practicum.repository.CompilationRepository;
@@ -26,7 +27,12 @@ public class CompilationServiceImpl implements CompilationService {
 
   @Override
   public CompilationDTO save(CompilationRequestDTO body) {
-    Compilation result = compilationRepository.save(modelMapper.map(body, Compilation.class));
+    List<Event> events = null;
+    if (body.getEvents() != null && !body.getEvents().isEmpty()) {
+      events = eventRepository.findAllById(body.getEvents());
+    }
+
+    Compilation result = compilationRepository.save(CompilationMapper.toCompilation(body, events));
     return modelMapper.map(result, CompilationDTO.class);
   }
 
@@ -41,17 +47,12 @@ public class CompilationServiceImpl implements CompilationService {
     if (body.getTitle() != null && !body.getTitle().equals(compilation.getTitle())) {
       compilation.setTitle(body.getTitle());
     }
-    if (body.getEvents() != null && !body.getEvents().stream().sorted()
-        .equals(compilation.getEvents().stream()
-            .map(Event::getId)
-            .sorted()
-            .collect(Collectors.toList())
-        )) {
+    if (isEventsUpdateRequired(compilation, body)) {
       List<Event> events = eventRepository.findAllById(body.getEvents());
       compilation.setEvents(events);
     }
 
-    Compilation saved = compilationRepository.save(compilation);
+    Compilation saved = compilationRepository.saveAndFlush(compilation);
     return modelMapper.map(saved, CompilationDTO.class);
   }
 
@@ -79,6 +80,14 @@ public class CompilationServiceImpl implements CompilationService {
     Compilation compilation = compilationRepository.findById(compId)
         .orElseThrow(() -> new NotFoundException(COMPILATION_NAME, compId.toString()));
     return modelMapper.map(compilation, CompilationDTO.class);
+  }
+
+  private boolean isEventsUpdateRequired(Compilation compilation, CompilationRequestDTO body) {
+    return body.getEvents() != null && !body.getEvents().stream().sorted()
+        .equals(compilation.getEvents().stream()
+            .map(Event::getId)
+            .sorted()
+            .collect(Collectors.toList()));
   }
 
 }
