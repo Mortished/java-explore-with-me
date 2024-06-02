@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.model.Status;
+import ru.practicum.model.EventStatus;
 
 @Data
 @Entity
@@ -50,9 +50,7 @@ public class Event {
   @JoinColumn(name = "user_id", nullable = false)
   private User initiator;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "location_id", nullable = false)
-  private Location location;
+  private String location;
 
   @Column(name = "is_paid", nullable = false)
   private boolean paid;
@@ -65,7 +63,7 @@ public class Event {
   private boolean requestModeration;
 
   @Enumerated(EnumType.STRING)
-  private Status state;
+  private EventStatus state;
 
   @Column(nullable = false)
   private String title;

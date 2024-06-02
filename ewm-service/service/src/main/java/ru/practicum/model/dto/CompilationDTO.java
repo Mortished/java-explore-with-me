@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CompilationDTO {
 
-  private List<EventShortInfoDTO> events;
+  private List<EventShortDTO> events;
 
   @NotNull
   private Long id;

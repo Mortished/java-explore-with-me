@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class EventShortInfoDTO {
+public class EventShortDTO {
 
   private String annotation;
 

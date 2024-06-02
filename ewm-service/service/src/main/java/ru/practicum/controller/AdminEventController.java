@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.model.dto.EventDTO;
+import ru.practicum.model.dto.EventFullDTO;
 import ru.practicum.model.dto.UpdateEventAdminRequestDTO;
 import ru.practicum.service.EventService;
 
@@ -29,7 +29,7 @@ public class AdminEventController {
   private final EventService eventService;
 
   @GetMapping
-  List<EventDTO> findEvents(
+  List<EventFullDTO> findEvents(
       @RequestParam(required = false) List<Long> users,
       @RequestParam(required = false) List<String> states,
       @RequestParam(required = false) List<Long> categories,
@@ -45,7 +45,7 @@ public class AdminEventController {
   }
 
   @PatchMapping("/{eventId}")
-  EventDTO updateEvent(@PathVariable Long eventId,
+  EventFullDTO updateEvent(@PathVariable Long eventId,
       @Valid @RequestBody UpdateEventAdminRequestDTO body) {
     log.info("PATCH /admin/events/{eventId}: eventId={}, body={}", eventId, body);
     return eventService.update(eventId, body);
