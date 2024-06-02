@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.model.dto.EventDTO;
+import ru.practicum.model.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.model.dto.EventRequestStatusUpdateResult;
 import ru.practicum.model.dto.EventShortInfoDTO;
 import ru.practicum.model.dto.NewEventDTO;
+import ru.practicum.model.dto.ParticipationRequestDto;
 import ru.practicum.model.dto.UpdateEventUserRequestDTO;
 import ru.practicum.service.EventService;
 
@@ -62,10 +65,17 @@ public class PrivateEventController {
   }
 
   @GetMapping("/{userId}/events/{eventId}/requests")
-  public List<Object> findEventRequests(@PathVariable Long userId, @PathVariable Long eventId) {
-    //TODO добавить возвращаемое DTO
+  public List<ParticipationRequestDto> findEventRequests(@PathVariable Long userId, @PathVariable Long eventId) {
     log.info("GET /users/{userId}/events/{eventId}/requests: userId={}, eventId={}", userId,
         eventId);
+    //TODO добавить вызов сервиса и логику метода
+    return null;
+  }
+
+  @PatchMapping("/{userId}/events/{eventId}/requests")
+  public EventRequestStatusUpdateResult updateEventRequest(@PathVariable Long userId, @PathVariable Long eventId,
+      @Valid @RequestBody EventRequestStatusUpdateRequest body) {
+    log.info("PATCH /users/{userId}/events/{eventId}/requests: userId={}, eventId={}, body={}", userId, eventId, body);
     //TODO добавить вызов сервиса и логику метода
     return null;
   }
