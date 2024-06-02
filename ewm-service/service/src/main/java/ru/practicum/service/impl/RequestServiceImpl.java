@@ -37,7 +37,7 @@ public class RequestServiceImpl implements RequestService {
 
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
-    if (requestRepository.existsByRequester_IdAndEvent_Id(userId, eventId)
+    if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)
         || !event.getState().equals(EventStatus.PUBLISHED)
         || (event.getParticipantLimit() > 0 && event.getConfirmedRequests()
         .equals(event.getParticipantLimit()))
@@ -88,10 +88,10 @@ public class RequestServiceImpl implements RequestService {
 
   @Override
   public List<ParticipationRequestDto> findAllByUserId(Long userId) {
-    User user = userRepository.findById(userId)
+    userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
 
-    return requestRepository.findAllByRequester_Id(userId).stream()
+    return requestRepository.findAllByRequesterId(userId).stream()
         .map(RequestMapper::toRequestDTO)
         .collect(Collectors.toList());
   }
