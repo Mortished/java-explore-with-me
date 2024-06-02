@@ -15,6 +15,8 @@ public class ExceptionHandlingControllerAdvice {
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
   private static final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
   private static final String UPDATE_CONFLICT_REASON = "For the requested operation the conditions are not met.";
+  private static final String REQUEST_VALIDATION_REASON = "Incorrectly made request.";
+  private static final String CONFLICT_REASON = "Integrity constraint has been violated.";
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
@@ -32,7 +34,7 @@ public class ExceptionHandlingControllerAdvice {
   public ErrorResponse handleValidationExceptions(ConstraintViolationException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.CONFLICT.name())
-        .reason("Integrity constraint has been violated.")
+        .reason(CONFLICT_REASON)
         .message(ex.getMessage())
         .timestamp(LocalDateTime.now().format(formatter))
         .build();
@@ -54,8 +56,8 @@ public class ExceptionHandlingControllerAdvice {
   public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.BAD_REQUEST.name())
-        .reason("Incorrectly made request.")
-        .message("sd")
+        .reason(REQUEST_VALIDATION_REASON)
+        .message(ex.getMessage())
         .timestamp(LocalDateTime.now().format(formatter))
         .build();
   }
