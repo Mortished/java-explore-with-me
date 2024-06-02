@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class ExceptionHandlingControllerAdvice {
@@ -54,6 +55,17 @@ public class ExceptionHandlingControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+    return ErrorResponse.builder()
+        .status(HttpStatus.BAD_REQUEST.name())
+        .reason(REQUEST_VALIDATION_REASON)
+        .message(ex.getMessage())
+        .timestamp(LocalDateTime.now().format(formatter))
+        .build();
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ErrorResponse handleTypeMismatchExceptions(RuntimeException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.BAD_REQUEST.name())
         .reason(REQUEST_VALIDATION_REASON)
