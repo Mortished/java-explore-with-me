@@ -6,6 +6,8 @@ import ru.practicum.entity.Request;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-  List<Request> findAllByRequester_Id(Integer requesterId);
+  List<Request> findAllByRequester_Id(Long requester_id);
+
+  boolean existsByRequester_IdAndEvent_Id(Long requester_id, Long event_id);
 
 }

@@ -42,8 +42,8 @@ public class ExceptionHandlingControllerAdvice {
   }
 
   @ResponseStatus(HttpStatus.CONFLICT)
-  @ExceptionHandler(EventUpdateConflictException.class)
-  public ErrorResponse handleValidationExceptions(EventUpdateConflictException ex) {
+  @ExceptionHandler(ConflictException.class)
+  public ErrorResponse handleValidationExceptions(ConflictException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.CONFLICT.name())
         .reason(UPDATE_CONFLICT_REASON)

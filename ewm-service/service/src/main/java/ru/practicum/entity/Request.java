@@ -2,6 +2,8 @@ package ru.practicum.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.model.EventRequestStatus;
 
 @Data
 @Entity
@@ -28,7 +31,8 @@ public class Request {
 
   private final LocalDateTime created = LocalDateTime.now();
 
-  private final String status = "PENDING";
+  @Enumerated(EnumType.STRING)
+  private EventRequestStatus status;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "event_id", nullable = false)

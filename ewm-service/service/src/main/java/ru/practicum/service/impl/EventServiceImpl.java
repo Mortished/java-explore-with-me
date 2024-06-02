@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.entity.Category;
 import ru.practicum.entity.Event;
 import ru.practicum.entity.User;
-import ru.practicum.exception.EventUpdateConflictException;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.model.EventSortType;
@@ -81,7 +81,7 @@ public class EventServiceImpl implements EventService {
     //TODO добавить проверку по времени от даты публикации и начала ивента
     //Duration.between(tempDateTime, toDateTime).toHours()
     if (!event.getState().equals(EventStatus.PENDING)) {
-      throw new EventUpdateConflictException();
+      throw new ConflictException();
     }
     try {
       eventRepository.save(EventMapper.toEvent(body, category));
@@ -114,7 +114,7 @@ public class EventServiceImpl implements EventService {
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
 
     if (checkEventDate(body.getEventDate())) {
-      throw new EventUpdateConflictException();
+      throw new ConflictException();
     }
     Category category = categoryRepository.findById(body.getCategory())
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
@@ -175,7 +175,7 @@ public class EventServiceImpl implements EventService {
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
 
     if (event.getState().equals(EventStatus.PUBLISHED) || checkEventDate(body.getEventDate())) {
-      throw new EventUpdateConflictException();
+      throw new ConflictException();
     }
 
     event.setAnnotation(body.getAnnotation());

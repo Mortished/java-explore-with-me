@@ -52,9 +52,10 @@ public class Event {
 
   private String location;
 
-  @Column(name = "is_paid", nullable = false)
+  @Column(columnDefinition = "boolean default false")
   private boolean paid;
 
+  @Column(nullable = false)
   private Integer participantLimit;
 
   private LocalDateTime publishedOn;
