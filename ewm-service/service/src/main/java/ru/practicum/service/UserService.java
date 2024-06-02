@@ -5,7 +5,7 @@ import ru.practicum.model.dto.UserDTO;
 
 public interface UserService {
 
-  void save(UserDTO user);
+  UserDTO save(UserDTO user);
 
   void delete(Long userId);
 

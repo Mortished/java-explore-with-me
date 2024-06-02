@@ -30,9 +30,9 @@ public class AdminUserController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void create(@Valid @RequestBody final UserDTO user) {
+  public UserDTO create(@Valid @RequestBody final UserDTO user) {
     log.info("POST /admin/users - with body: {}", user);
-    userService.save(user);
+    return userService.save(user);
   }
 
   @DeleteMapping("/{userId}")
