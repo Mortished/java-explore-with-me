@@ -37,10 +37,12 @@ public class RequestServiceImpl implements RequestService {
 
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
+
     if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)
         || !event.getState().equals(EventStatus.PUBLISHED)
-        || (event.getParticipantLimit() > 0 && event.getConfirmedRequests()
-        .equals(event.getParticipantLimit()))
+        || (event.getParticipantLimit() > 0
+        && event.getConfirmedRequests().equals(event.getParticipantLimit()))
+        || event.getInitiator().getId().equals(userId)
     ) {
       throw new ConflictException();
     }

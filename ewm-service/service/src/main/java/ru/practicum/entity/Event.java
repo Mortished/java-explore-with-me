@@ -16,6 +16,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ru.practicum.model.EventStatus;
 
 @Data
@@ -24,6 +26,7 @@ import ru.practicum.model.EventStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "events")
+@DynamicInsert
 public class Event {
 
   @Id
@@ -37,6 +40,8 @@ public class Event {
   @JoinColumn(name = "category_id", nullable = false)
   private Category category;
 
+  @ColumnDefault("0")
+  @Column(nullable = false)
   private Integer confirmedRequests;
 
   private LocalDateTime createdOn;
@@ -52,15 +57,16 @@ public class Event {
 
   private String location;
 
-  @Column(columnDefinition = "boolean default false")
+  @ColumnDefault("false")
   private boolean paid;
 
+  @ColumnDefault("0")
   @Column(nullable = false)
   private Integer participantLimit;
 
   private LocalDateTime publishedOn;
 
-  @Column(columnDefinition = "boolean default true")
+  @ColumnDefault("true")
   private boolean requestModeration;
 
   @Enumerated(EnumType.STRING)
