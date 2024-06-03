@@ -1,6 +1,9 @@
 package ru.practicum.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import ru.practicum.entity.Request;
+import ru.practicum.model.dto.EventRequestStatusUpdateResult;
 import ru.practicum.model.dto.ParticipationRequestDto;
 
 public class RequestMapper {
@@ -12,6 +15,18 @@ public class RequestMapper {
         .id(request.getId())
         .requester(request.getRequester().getId())
         .status(request.getStatus().name())
+        .build();
+  }
+
+  public static EventRequestStatusUpdateResult toEventRequestStatusUpdateResult(
+      List<Request> confirmedRequests, List<Request> rejectedRequests) {
+    return EventRequestStatusUpdateResult.builder()
+        .confirmedRequests(confirmedRequests.stream()
+            .map(RequestMapper::toRequestDTO)
+            .collect(Collectors.toList()))
+        .rejectedRequests(rejectedRequests.stream()
+            .map(RequestMapper::toRequestDTO)
+            .collect(Collectors.toList()))
         .build();
   }
 

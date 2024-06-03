@@ -24,6 +24,7 @@ import ru.practicum.model.dto.NewEventDTO;
 import ru.practicum.model.dto.ParticipationRequestDto;
 import ru.practicum.model.dto.UpdateEventUserRequestDTO;
 import ru.practicum.service.EventService;
+import ru.practicum.service.RequestService;
 
 @RestController
 @AllArgsConstructor
@@ -33,6 +34,7 @@ import ru.practicum.service.EventService;
 public class PrivateEventController {
 
   private final EventService eventService;
+  private final RequestService requestService;
 
   @GetMapping("/{userId}/events")
   public List<EventShortDTO> findEventsByUser(@PathVariable Long userId,
@@ -69,8 +71,7 @@ public class PrivateEventController {
       @PathVariable Long eventId) {
     log.info("GET /users/{userId}/events/{eventId}/requests: userId={}, eventId={}", userId,
         eventId);
-    //TODO добавить вызов сервиса и логику метода
-    return null;
+    return requestService.findRequestsByUserEvent(userId, eventId);
   }
 
   @PatchMapping("/{userId}/events/{eventId}/requests")
@@ -79,8 +80,7 @@ public class PrivateEventController {
       @Valid @RequestBody EventRequestStatusUpdateRequest body) {
     log.info("PATCH /users/{userId}/events/{eventId}/requests: userId={}, eventId={}, body={}",
         userId, eventId, body);
-    //TODO добавить вызов сервиса и логику метода
-    return null;
+    return requestService.updateRequestsByUserEvent(userId, eventId, body);
   }
 
 }
