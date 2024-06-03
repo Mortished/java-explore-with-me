@@ -41,7 +41,7 @@ public class CompilationServiceImpl implements CompilationService {
     Compilation compilation = compilationRepository.findById(compId)
         .orElseThrow(() -> new NotFoundException(COMPILATION_NAME, compId.toString()));
 
-    if (body.getPinned() != null && body.getPinned() != compilation.isPinned()) {
+    if (body.getPinned() != null && body.getPinned() != compilation.getPinned()) {
       compilation.setPinned(body.getPinned());
     }
     if (body.getTitle() != null && !body.getTitle().equals(compilation.getTitle())) {

@@ -59,7 +59,7 @@ public class Event {
   private String location;
 
   @ColumnDefault("false")
-  private boolean paid;
+  private Boolean paid;
 
   @ColumnDefault("0")
   @Column(nullable = false)

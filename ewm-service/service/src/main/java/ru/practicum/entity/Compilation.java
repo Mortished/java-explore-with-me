@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -27,8 +28,8 @@ public class Compilation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(columnDefinition = "boolean default false")
-  private boolean pinned;
+  @ColumnDefault("false")
+  private Boolean pinned;
 
   @Column(unique = true, nullable = false)
   private String title;
