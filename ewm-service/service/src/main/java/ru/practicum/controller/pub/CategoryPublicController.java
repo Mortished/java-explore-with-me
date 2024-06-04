@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.pub;
 
 import java.util.List;
 import javax.validation.constraints.Min;
@@ -18,7 +18,7 @@ import ru.practicum.service.CategoryService;
 @RequestMapping("/categories")
 @Validated
 @Slf4j
-public class PublicCategoryController {
+public class CategoryPublicController {
 
   private final CategoryService categoryService;
 

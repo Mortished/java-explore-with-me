@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.pub;
 
 import java.util.List;
 import javax.validation.constraints.Min;
@@ -18,7 +18,7 @@ import ru.practicum.service.CompilationService;
 @RequestMapping("/compilations")
 @Validated
 @Slf4j
-public class PublicCompilationController {
+public class CompilationPublicController {
 
   private final CompilationService compilationService;
 

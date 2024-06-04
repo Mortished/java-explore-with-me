@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.admin;
 
 import java.util.List;
 import javax.validation.Valid;
@@ -24,7 +24,7 @@ import ru.practicum.service.UserService;
 @RequestMapping("/admin/users")
 @Validated
 @Slf4j
-public class AdminUserController {
+public class UserAdminController {
 
   private final UserService userService;
 

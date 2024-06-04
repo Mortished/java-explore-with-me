@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.admin;
 
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import ru.practicum.service.CompilationService;
 @RequestMapping("/admin/compilations")
 @Validated
 @Slf4j
-public class AdminCompilationController {
+public class CompilationAdminController {
 
   private final CompilationService compilationService;
 

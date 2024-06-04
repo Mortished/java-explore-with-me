@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.priv;
 
 import java.util.List;
 import javax.validation.Valid;
@@ -31,7 +31,7 @@ import ru.practicum.service.RequestService;
 @RequestMapping("/users")
 @Validated
 @Slf4j
-public class PrivateEventController {
+public class EventPrivateController {
 
   private final EventService eventService;
   private final RequestService requestService;
