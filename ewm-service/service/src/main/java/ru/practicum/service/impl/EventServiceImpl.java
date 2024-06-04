@@ -155,7 +155,6 @@ public class EventServiceImpl implements EventService {
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
 
     Event event = EventMapper.toEvent(body, category);
-    ;
 
     event.setInitiator(user);
     event.setCreatedOn(LocalDateTime.now());
@@ -197,30 +196,41 @@ public class EventServiceImpl implements EventService {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
 
-    Category category = event.getCategory();
-
-    if (body.getCategory() != null) {
-      category = categoryRepository.findById(body.getCategory())
-          .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
-    }
-
     if (event.getState().equals(EventStatus.PUBLISHED) || checkEventDate(body.getEventDate())) {
       throw new ConflictException();
     }
 
-    event.setAnnotation(body.getAnnotation());
-    event.setCategory(category);
-    event.setDescription(body.getDescription());
-    event.setEventDate(body.getEventDate());
-    event.setPaid(body.getPaid());
-    event.setParticipantLimit(body.getParticipantLimit());
-    event.setTitle(body.getTitle());
-    event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
+    if (body.getCategory() != null) {
+      Category category = categoryRepository.findById(body.getCategory())
+          .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
+      event.setCategory(category);
+    }
 
-    if (body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW)) {
-      event.setState(EventStatus.CANCELED);
-    } else {
-      event.setState(EventStatus.PENDING);
+    if (body.getAnnotation() != null) {
+      event.setAnnotation(body.getAnnotation());
+    }
+    if (body.getDescription() != null) {
+      event.setDescription(body.getDescription());
+    }
+    if (body.getEventDate() != null) {
+      event.setEventDate(body.getEventDate());
+    }
+    if (body.getPaid()) {
+      event.setPaid(body.getPaid());
+    }
+    if (body.getParticipantLimit() != null) {
+      event.setParticipantLimit(body.getParticipantLimit());
+    }
+    if (body.getTitle() != null) {
+      event.setTitle(body.getTitle());
+    }
+    if (body.getLocation() != null) {
+      event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
+    }
+    if (body.getStateAction() != null) {
+      EventStatus status = body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW)
+          ? EventStatus.CANCELED : EventStatus.PENDING;
+      event.setState(status);
     }
 
     Event result = eventRepository.saveAndFlush(event);
