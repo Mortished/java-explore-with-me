@@ -16,6 +16,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.practicum.client.StatsClient;
 import ru.practicum.entity.Category;
 import ru.practicum.entity.Event;
 import ru.practicum.entity.User;
@@ -46,7 +47,7 @@ public class EventServiceImpl implements EventService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
   private final ObjectMapper objectMapper;
-  //private final StatsClient statsClient;
+  private final StatsClient statsClient;
 
 
   @Override
@@ -85,7 +86,7 @@ public class EventServiceImpl implements EventService {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
 
-    if (!event.getState().equals(EventStatus.PENDING) || checkEventDate(body.getEventDate())) {
+    if (!event.getState().equals(EventStatus.PENDING)) {
       throw new ConflictException();
     }
 
@@ -103,6 +104,9 @@ public class EventServiceImpl implements EventService {
       event.setDescription(body.getDescription());
     }
     if (body.getEventDate() != null) {
+      if (checkEventDate(body.getEventDate())) {
+        throw new ConflictException();
+      }
       event.setEventDate(body.getEventDate());
     }
     if (body.getLocation() != null) {
@@ -139,7 +143,7 @@ public class EventServiceImpl implements EventService {
     if (!event.getState().equals(EventStatus.PUBLISHED)) {
       throw new NotFoundException(EVENT_NAME, eventId.toString());
     }
-    //statsClient.hit("/events/" + eventId, "1.1.1.1", LocalDateTime.now());
+    statsClient.hit("/events/" + eventId, "1.1.1.1", LocalDateTime.now());
     //TODO Реализиовать логику выборки
     return null;
   }
@@ -206,7 +210,7 @@ public class EventServiceImpl implements EventService {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
 
-    if (event.getState().equals(EventStatus.PUBLISHED) || checkEventDate(body.getEventDate())) {
+    if (event.getState().equals(EventStatus.PUBLISHED)) {
       throw new ConflictException();
     }
 
@@ -223,6 +227,9 @@ public class EventServiceImpl implements EventService {
       event.setDescription(body.getDescription());
     }
     if (body.getEventDate() != null) {
+      if (checkEventDate(body.getEventDate())) {
+        throw new ConflictException();
+      }
       event.setEventDate(body.getEventDate());
     }
     if (body.getPaid()) {
