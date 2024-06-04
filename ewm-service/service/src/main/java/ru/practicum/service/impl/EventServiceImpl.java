@@ -4,7 +4,6 @@ import static ru.practicum.utils.Dictionary.CATEGORY_NAME;
 import static ru.practicum.utils.Dictionary.EVENT_NAME;
 import static ru.practicum.utils.Dictionary.USER_NAME;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import ru.practicum.entity.User;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;
+import ru.practicum.model.AdminEventRequestStatus;
 import ru.practicum.model.EventSortType;
 import ru.practicum.model.EventStatus;
 import ru.practicum.model.UserEventRequestStatus;
@@ -47,6 +48,7 @@ public class EventServiceImpl implements EventService {
 
 
   @Override
+  @SneakyThrows
   public List<EventFullDTO> findByParams(List<Long> users, List<String> states,
       List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
       Integer size) {
@@ -55,13 +57,10 @@ public class EventServiceImpl implements EventService {
         rangeEnd, from, size);
 
     List<EventFullDTO> result = new ArrayList<>();
-    try {
-      for (Event event : events) {
-        EventFullDTO eventFullDTO = EventMapper.toEventFullDTO(event);
-        result.add(eventFullDTO);
-      }
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
+
+    for (Event event : events) {
+      EventFullDTO eventFullDTO = EventMapper.toEventFullDTO(event);
+      result.add(eventFullDTO);
     }
 
     return result;
@@ -76,35 +75,55 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @SneakyThrows
   public EventFullDTO update(Long eventId, UpdateEventAdminRequestDTO body) {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
-
-    Category category = null;
-    if (body.getCategory() != null) {
-      category = categoryRepository.findById(body.getCategory())
-          .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
-    }
 
     if (!event.getState().equals(EventStatus.PENDING) || checkEventDate(body.getEventDate())) {
       throw new ConflictException();
     }
 
-    Event result = null;
-    try {
-      result = eventRepository.saveAndFlush(EventMapper.toEvent(body, category));
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
+    Category category = null;
+    if (body.getCategory() != null) {
+      category = categoryRepository.findById(body.getCategory())
+          .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
+      event.setCategory(category);
     }
 
-    EventFullDTO fullDTO = null;
-    try {
-      fullDTO = EventMapper.toEventFullDTO(result);
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
+    if (body.getAnnotation() != null) {
+      event.setAnnotation(body.getAnnotation());
+    }
+    if (body.getDescription() != null) {
+      event.setDescription(body.getDescription());
+    }
+    if (body.getEventDate() != null) {
+      event.setEventDate(body.getEventDate());
+    }
+    if (body.getLocation() != null) {
+      event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
+    }
+    if (body.getPaid() != null) {
+      event.setPaid(body.getPaid());
+    }
+    if (body.getParticipantLimit() != null) {
+      event.setParticipantLimit(body.getParticipantLimit());
+    }
+    if (body.getRequestModeration() != null) {
+      event.setRequestModeration(body.getRequestModeration());
+    }
+    if (body.getStateAction() != null) {
+      EventStatus status = body.getStateAction().equals(AdminEventRequestStatus.PUBLISH_EVENT)
+          ? EventStatus.PUBLISHED : EventStatus.CANCELED;
+      event.setState(status);
+    }
+    if (body.getTitle() != null) {
+      event.setTitle(body.getTitle());
     }
 
-    return fullDTO;
+    Event result = eventRepository.saveAndFlush(event);
+
+    return EventMapper.toEventFullDTO(result);
   }
 
   @Override
@@ -124,6 +143,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @SneakyThrows
   public EventFullDTO create(Long userId, NewEventDTO body) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
@@ -134,12 +154,9 @@ public class EventServiceImpl implements EventService {
     Category category = categoryRepository.findById(body.getCategory())
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
 
-    Event event = null;
-    try {
-      event = EventMapper.toEvent(body, category);
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
-    }
+    Event event = EventMapper.toEvent(body, category);
+    ;
+
     event.setInitiator(user);
     event.setCreatedOn(LocalDateTime.now());
     if (event.isRequestModeration()) {
@@ -151,17 +168,11 @@ public class EventServiceImpl implements EventService {
 
     Event result = eventRepository.saveAndFlush(event);
 
-    EventFullDTO fullDTO = null;
-    try {
-      fullDTO = EventMapper.toEventFullDTO(result);
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
-    }
-
-    return fullDTO;
+    return EventMapper.toEventFullDTO(result);
   }
 
   @Override
+  @SneakyThrows
   public EventFullDTO findUserEventById(Long userId, Long eventId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
@@ -173,17 +184,12 @@ public class EventServiceImpl implements EventService {
       log.warn("Юзер из запроса != юзеру события");
       throw new NotFoundException(EVENT_NAME, eventId.toString());
     }
-    EventFullDTO fullDTO = null;
-    try {
-      fullDTO = EventMapper.toEventFullDTO(event);
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
-    }
 
-    return fullDTO;
+    return EventMapper.toEventFullDTO(event);
   }
 
   @Override
+  @SneakyThrows
   public EventFullDTO updateUserEvent(Long userId, Long eventId, UpdateEventUserRequestDTO body) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
@@ -209,12 +215,7 @@ public class EventServiceImpl implements EventService {
     event.setPaid(body.getPaid());
     event.setParticipantLimit(body.getParticipantLimit());
     event.setTitle(body.getTitle());
-
-    try {
-      event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
-    }
+    event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
 
     if (body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW)) {
       event.setState(EventStatus.CANCELED);
@@ -224,14 +225,7 @@ public class EventServiceImpl implements EventService {
 
     Event result = eventRepository.saveAndFlush(event);
 
-    EventFullDTO fullDTO = null;
-    try {
-      fullDTO = EventMapper.toEventFullDTO(result);
-    } catch (JsonProcessingException e) {
-      log.warn(e.getMessage());
-    }
-
-    return fullDTO;
+    return EventMapper.toEventFullDTO(result);
   }
 
   private boolean checkEventDate(LocalDateTime eventDate) {
