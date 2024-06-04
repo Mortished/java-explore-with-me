@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -44,19 +45,26 @@ public class EventServiceImpl implements EventService {
   private final ModelMapper modelMapper;
   private final ObjectMapper objectMapper;
 
+
   @Override
   public List<EventFullDTO> findByParams(List<Long> users, List<String> states,
       List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
       Integer size) {
-    if (users != null && states != null && categories != null && rangeStart != null
-        && rangeEnd != null) {
-      return eventRepository.findByAllParams(users, states, categories, rangeStart, rangeEnd, from,
-              size).stream().map(it -> modelMapper.map(it, EventFullDTO.class))
-          .collect(Collectors.toList());
+
+    List<Event> events = eventRepository.findByAllParams(users, states, categories, rangeStart,
+        rangeEnd, from, size);
+
+    List<EventFullDTO> result = new ArrayList<>();
+    try {
+      for (Event event : events) {
+        EventFullDTO eventFullDTO = EventMapper.toEventFullDTO(event);
+        result.add(eventFullDTO);
+      }
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
     }
-    //TODO Добавить остальные варианты выборки
-    return eventRepository.findAllWithPaging(from, size).stream()
-        .map(it -> modelMapper.map(it, EventFullDTO.class)).collect(Collectors.toList());
+
+    return result;
   }
 
   @Override
@@ -78,18 +86,25 @@ public class EventServiceImpl implements EventService {
           .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
     }
 
-    //TODO добавить проверку по времени от даты публикации и начала ивента
-    //Duration.between(tempDateTime, toDateTime).toHours()
-    if (!event.getState().equals(EventStatus.PENDING)) {
+    if (!event.getState().equals(EventStatus.PENDING) || checkEventDate(body.getEventDate())) {
       throw new ConflictException();
     }
+
+    Event result = null;
     try {
-      eventRepository.save(EventMapper.toEvent(body, category));
+      result = eventRepository.saveAndFlush(EventMapper.toEvent(body, category));
     } catch (JsonProcessingException e) {
       log.warn(e.getMessage());
     }
-    //TODO Сделать ответ
-    return null;
+
+    EventFullDTO fullDTO = null;
+    try {
+      fullDTO = EventMapper.toEventFullDTO(result);
+    } catch (JsonProcessingException e) {
+      log.warn(e.getMessage());
+    }
+
+    return fullDTO;
   }
 
   @Override
