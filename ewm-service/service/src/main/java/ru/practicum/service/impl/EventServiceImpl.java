@@ -232,7 +232,7 @@ public class EventServiceImpl implements EventService {
       }
       event.setEventDate(body.getEventDate());
     }
-    if (body.getPaid()) {
+    if (body.getPaid() != null) {
       event.setPaid(body.getPaid());
     }
     if (body.getParticipantLimit() != null) {

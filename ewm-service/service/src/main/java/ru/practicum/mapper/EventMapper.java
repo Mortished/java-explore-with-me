@@ -27,7 +27,7 @@ public class EventMapper {
         .location(objectMapper.writeValueAsString(dto.getLocation()))
         .paid(dto.getPaid() != null ? dto.getPaid() : null)
         .participantLimit(dto.getParticipantLimit())
-        .requestModeration(dto.getRequestModeration())
+        .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : true)
         .title(dto.getTitle())
         .build();
   }
