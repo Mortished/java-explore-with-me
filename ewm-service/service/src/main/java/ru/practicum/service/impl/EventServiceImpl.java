@@ -10,11 +10,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.practicum.client.StatsClient;
 import ru.practicum.entity.Category;
 import ru.practicum.entity.Event;
 import ru.practicum.entity.User;
@@ -45,6 +47,7 @@ public class EventServiceImpl implements EventService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
   private final ObjectMapper objectMapper;
+  private final StatsClient statsClient;
 
 
   @Override
@@ -69,7 +72,10 @@ public class EventServiceImpl implements EventService {
   @Override
   public List<EventFullDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
-      Integer from, Integer size) {
+      Integer from, Integer size, HttpServletRequest request) {
+
+    List<Event> result = eventRepository.findByAllParams(text, categories, paid, rangeStart,
+        rangeEnd, onlyAvailable, from, size);
     //TODO Реализовать логику выборки и маппинг параметров
     return List.of();
   }
@@ -127,9 +133,14 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public EventFullDTO findById(Long eventId) {
+  public EventFullDTO findById(Long eventId, HttpServletRequest request) {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
+
+    if (!event.getState().equals(EventStatus.PUBLISHED)) {
+      throw new NotFoundException(EVENT_NAME, eventId.toString());
+    }
+    statsClient.hit("/events/" + eventId, "1.1.1.1", LocalDateTime.now());
     //TODO Реализиовать логику выборки
     return null;
   }

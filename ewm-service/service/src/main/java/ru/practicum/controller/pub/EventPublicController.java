@@ -2,6 +2,7 @@ package ru.practicum.controller.pub;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,19 +36,20 @@ public class EventPublicController {
       @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
       @RequestParam(required = false) EventSortType sort,
       @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
-      @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size
+      @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size,
+      HttpServletRequest request
   ) {
     log.info(
         "GET /events : text={}, categories={}, paid={}, rangeStart={}, rangeEnd={}, onlyAvailable={}, sort={}, from={}, size={}",
         text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     return eventService.findByParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
-        sort, from, size);
+        sort, from, size, request);
   }
 
   @GetMapping("/{id}")
-  public EventFullDTO findById(@PathVariable("id") Long id) {
+  public EventFullDTO findById(@PathVariable("id") Long id, HttpServletRequest request) {
     log.info("GET /events/{}", id);
-    return eventService.findById(id);
+    return eventService.findById(id, request);
   }
 
 }

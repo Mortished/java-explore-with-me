@@ -13,6 +13,8 @@ import ru.practicum.model.HitDTO;
 @Component
 public class StatsClient extends BaseClient {
 
+  private final String MAIN_SERVICE_NAME = "ewm-main-service";
+
   protected StatsClient(RestTemplateBuilder builder) {
     super(builder
         .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
@@ -20,9 +22,9 @@ public class StatsClient extends BaseClient {
         .build());
   }
 
-  public ResponseEntity<Object> hit(String app, String uri, String ip,
+  public ResponseEntity<Object> hit(String uri, String ip,
       LocalDateTime requestDateTime) {
-    HitDTO body = new HitDTO(app, uri, ip, requestDateTime);
+    HitDTO body = new HitDTO(MAIN_SERVICE_NAME, uri, ip, requestDateTime);
     return post(body);
   }
 

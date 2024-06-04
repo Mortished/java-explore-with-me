@@ -22,4 +22,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
   @Query(value = "SELECT * FROM events WHERE user_id = ?1 LIMIT ?3 OFFSET ?2", nativeQuery = true)
   List<Event> findAllByUserId(Long userId, Integer from, Integer size);
 
+  @Query(value = "", nativeQuery = true)
+  List<Event> findByAllParams(String text, List<Long> categories, Boolean paid,
+      LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, Integer from,
+      Integer size);
 }

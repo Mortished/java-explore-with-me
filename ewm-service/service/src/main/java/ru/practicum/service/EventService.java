@@ -2,6 +2,7 @@ package ru.practicum.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import ru.practicum.model.EventSortType;
 import ru.practicum.model.dto.EventFullDTO;
 import ru.practicum.model.dto.EventShortDTO;
@@ -16,11 +17,11 @@ public interface EventService {
 
   List<EventFullDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
-      Integer from, Integer size);
+      Integer from, Integer size, HttpServletRequest request);
 
   EventFullDTO update(Long eventId, UpdateEventAdminRequestDTO body);
 
-  EventFullDTO findById(Long eventId);
+  EventFullDTO findById(Long eventId, HttpServletRequest request);
 
   List<EventShortDTO> findEventsByUser(Long userId, Integer from, Integer size);
 
