@@ -10,9 +10,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
   @Query(value = "SELECT * "
       + "FROM events "
-      + "WHERE (id IN ?1 OR ?1 IS null) "
-      + "AND (state IN ?2 OR ?2 IS null) "
-      + "AND (category_id IN ?3 OR ?3 IS null) "
+      + "WHERE (id IN (?1) OR ?1 IS null) "
+      + "AND (state IN (?2) OR ?2 IS null) "
+      + "AND (category_id IN (?3) OR ?3 IS null) "
       + "AND (event_date > ?4 OR ?4 IS null) "
       + "AND (event_date < ?5 OR ?5 IS null) "
       + "LIMIT ?7 OFFSET ?6 ", nativeQuery = true)
