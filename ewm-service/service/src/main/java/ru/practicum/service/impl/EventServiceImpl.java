@@ -74,9 +74,9 @@ public class EventServiceImpl implements EventService {
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
       Integer from, Integer size, HttpServletRequest request) {
 
+    //TODO Реализовать логику выборки и маппинг параметров
     List<Event> result = eventRepository.findByAllParams(text, categories, paid, rangeStart,
         rangeEnd, onlyAvailable, from, size);
-    //TODO Реализовать логику выборки и маппинг параметров
     return List.of();
   }
 
