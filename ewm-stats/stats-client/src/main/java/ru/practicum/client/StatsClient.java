@@ -13,7 +13,7 @@ import ru.practicum.model.HitDTO;
 @Component
 public class StatsClient extends BaseClient {
 
-  private final String MAIN_SERVICE_NAME = "ewm-main-service";
+  private final static String MAIN_SERVICE_NAME = "ewm-main-service";
 
   protected StatsClient(RestTemplateBuilder builder) {
     super(builder
