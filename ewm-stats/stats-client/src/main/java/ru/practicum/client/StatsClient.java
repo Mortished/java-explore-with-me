@@ -15,7 +15,7 @@ public class StatsClient extends BaseClient {
 
   private static final String MAIN_SERVICE_NAME = "ewm-main-service";
 
-  protected StatsClient(RestTemplateBuilder builder) {
+  public StatsClient(RestTemplateBuilder builder) {
     super(builder
         .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
