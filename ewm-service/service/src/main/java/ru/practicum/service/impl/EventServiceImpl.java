@@ -79,6 +79,7 @@ public class EventServiceImpl implements EventService {
     List<Event> events = eventRepository.findByAllParams(text, categories, paid, rangeStart,
         rangeEnd, onlyAvailable, sortBy, from, size);
 
+    //TODO пофиксить взаимодействие с сервисом статистики
     //statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
 
     return events.stream()
@@ -153,7 +154,9 @@ public class EventServiceImpl implements EventService {
     event.setViews(event.getViews() + 1);
     Event result = eventRepository.saveAndFlush(event);
 
-    statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+    //TODO пофиксить взаимодействие с сервисом статистики
+    //statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+
     return EventMapper.toEventFullDTO(result);
   }
 

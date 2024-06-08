@@ -174,13 +174,13 @@ public class RequestServiceImpl implements RequestService {
 
     });
 
-    return RequestMapper.toEventRequestStatusUpdateResult(rejectedRequests, confirmedRequests);
+    return RequestMapper.toEventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
   }
 
   private boolean isValidRequestStatus(List<Request> requests) {
     return requests.stream()
         .map(Request::getStatus)
-        .anyMatch(it -> !it.equals(EventRequestStatus.PENDING));
+        .anyMatch(it -> it.equals(EventRequestStatus.PENDING));
   }
 
 }
