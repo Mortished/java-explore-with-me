@@ -17,7 +17,7 @@ public class StatsClient extends BaseClient {
 
   public StatsClient(RestTemplateBuilder builder) {
     super(builder
-        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
+        .uriTemplateHandler(new DefaultUriBuilderFactory("http://stats-server:9090"))
         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
         .build());
   }
