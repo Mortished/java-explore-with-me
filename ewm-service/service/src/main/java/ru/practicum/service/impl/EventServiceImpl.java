@@ -70,14 +70,20 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public List<EventFullDTO> findByParams(String text, List<Long> categories, Boolean paid,
+  public List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
-      Integer from, Integer size, HttpServletRequest request) {
+      Integer from, Integer size, HttpServletRequest request
+  ) {
+    String sortBy = sort == null ? null : sort.name();
 
-    //TODO Реализовать логику выборки и маппинг параметров
-    List<Event> result = eventRepository.findByAllParams(text, categories, paid, rangeStart,
-        rangeEnd, onlyAvailable, from, size);
-    return List.of();
+    List<Event> events = eventRepository.findByAllParams(text, categories, paid, rangeStart,
+        rangeEnd, onlyAvailable, sortBy, from, size);
+
+    statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+
+    return events.stream()
+        .map(it -> modelMapper.map(it, EventShortDTO.class))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -136,6 +142,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @SneakyThrows
   public EventFullDTO findById(Long eventId, HttpServletRequest request) {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
@@ -143,9 +150,11 @@ public class EventServiceImpl implements EventService {
     if (!event.getState().equals(EventStatus.PUBLISHED)) {
       throw new NotFoundException(EVENT_NAME, eventId.toString());
     }
-    statsClient.hit("/events/" + eventId, "1.1.1.1", LocalDateTime.now());
-    //TODO Реализиовать логику выборки
-    return null;
+    event.setViews(event.getViews() + 1);
+    Event result = eventRepository.saveAndFlush(event);
+
+    statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+    return EventMapper.toEventFullDTO(result);
   }
 
   @Override
@@ -153,7 +162,8 @@ public class EventServiceImpl implements EventService {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
     return eventRepository.findAllByUserId(userId, from, size).stream()
-        .map(it -> modelMapper.map(it, EventShortDTO.class)).collect(Collectors.toList());
+        .map(it -> modelMapper.map(it, EventShortDTO.class))
+        .collect(Collectors.toList());
   }
 
   @Override

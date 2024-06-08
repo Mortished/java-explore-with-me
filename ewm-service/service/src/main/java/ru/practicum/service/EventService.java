@@ -15,7 +15,7 @@ public interface EventService {
   List<EventFullDTO> findByParams(List<Long> users, List<String> states, List<Long> categories,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
-  List<EventFullDTO> findByParams(String text, List<Long> categories, Boolean paid,
+  List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
       Integer from, Integer size, HttpServletRequest request);
 

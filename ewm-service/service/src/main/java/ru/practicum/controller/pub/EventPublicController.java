@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.model.EventSortType;
 import ru.practicum.model.dto.EventFullDTO;
+import ru.practicum.model.dto.EventShortDTO;
 import ru.practicum.service.EventService;
 
 @RestController
@@ -27,7 +28,7 @@ public class EventPublicController {
   private final EventService eventService;
 
   @GetMapping
-  public List<EventFullDTO> findAllWithParams(
+  public List<EventShortDTO> findAllWithParams(
       @RequestParam(required = false) String text,
       @RequestParam(required = false) List<Long> categories,
       @RequestParam(required = false) Boolean paid,
@@ -42,6 +43,11 @@ public class EventPublicController {
     log.info(
         "GET /events : text={}, categories={}, paid={}, rangeStart={}, rangeEnd={}, onlyAvailable={}, sort={}, from={}, size={}",
         text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+
+    if (rangeStart == null && rangeEnd == null) {
+      rangeStart = LocalDateTime.now();
+    }
+
     return eventService.findByParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
         sort, from, size, request);
   }
