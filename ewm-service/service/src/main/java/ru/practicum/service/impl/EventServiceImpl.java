@@ -79,7 +79,7 @@ public class EventServiceImpl implements EventService {
     List<Event> events = eventRepository.findByAllParams(text, categories, paid, rangeStart,
         rangeEnd, onlyAvailable, sortBy, from, size);
 
-    statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+    //statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
 
     return events.stream()
         .map(it -> modelMapper.map(it, EventShortDTO.class))
@@ -161,6 +161,7 @@ public class EventServiceImpl implements EventService {
   public List<EventShortDTO> findEventsByUser(Long userId, Integer from, Integer size) {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
+
     return eventRepository.findAllByUserId(userId, from, size).stream()
         .map(it -> modelMapper.map(it, EventShortDTO.class))
         .collect(Collectors.toList());

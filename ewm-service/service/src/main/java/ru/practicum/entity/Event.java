@@ -76,6 +76,7 @@ public class Event {
   @Column(length = 120, nullable = false)
   private String title;
 
+  @ColumnDefault("0")
   private Long views;
 
 }
