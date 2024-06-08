@@ -2,6 +2,7 @@ package ru.practicum.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -19,6 +20,7 @@ public class UpdateEventUserRequestDTO {
   @Length(min = 20, max = 7000)
   private String description;
 
+  @FutureOrPresent
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime eventDate;
 
