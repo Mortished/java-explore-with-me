@@ -221,10 +221,6 @@ public class EventServiceImpl implements EventService {
     Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
 
-    if (event.getState().equals(EventStatus.PUBLISHED)) {
-      throw new ConflictException();
-    }
-
     if (body.getCategory() != null) {
       Category category = categoryRepository.findById(body.getCategory())
           .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
