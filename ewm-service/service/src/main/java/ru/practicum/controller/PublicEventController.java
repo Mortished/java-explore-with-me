@@ -1,4 +1,4 @@
-package ru.practicum.controller.pub;
+package ru.practicum.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +23,7 @@ import ru.practicum.service.EventService;
 @RequestMapping("/events")
 @Validated
 @Slf4j
-public class EventPublicController {
+public class PublicEventController {
 
   private final EventService eventService;
 

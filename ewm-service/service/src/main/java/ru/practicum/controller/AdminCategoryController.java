@@ -1,4 +1,4 @@
-package ru.practicum.controller.admin;
+package ru.practicum.controller;
 
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import ru.practicum.service.CategoryService;
 @RequestMapping("/admin/categories")
 @Validated
 @Slf4j
-public class CategoryAdminController {
+public class AdminCategoryController {
 
   private final CategoryService categoryService;
 

@@ -1,4 +1,4 @@
-package ru.practicum.controller.priv;
+package ru.practicum.controller;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import ru.practicum.service.RequestService;
 @RequestMapping("/users")
 @Validated
 @Slf4j
-public class UserRequestPrivateController {
+public class PrivateUserRequestController {
 
   private final RequestService requestService;
 
