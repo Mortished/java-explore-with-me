@@ -25,10 +25,12 @@ public class EventMapper {
         .description(dto.getDescription())
         .eventDate(dto.getEventDate())
         .location(objectMapper.writeValueAsString(dto.getLocation()))
-        .paid(dto.getPaid() != null ? dto.getPaid() : null)
-        .participantLimit(dto.getParticipantLimit())
+        .paid(dto.getPaid() != null ? dto.getPaid() : false)
+        .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
         .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : true)
         .title(dto.getTitle())
+        .views(0L)
+        .confirmedRequests(0)
         .build();
   }
 
