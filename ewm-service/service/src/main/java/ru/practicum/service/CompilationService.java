@@ -2,13 +2,14 @@ package ru.practicum.service;
 
 import java.util.List;
 import ru.practicum.model.dto.CompilationDTO;
-import ru.practicum.model.dto.CompilationRequestDTO;
+import ru.practicum.model.dto.NewCompilationRequestDTO;
+import ru.practicum.model.dto.UpdateCompilationRequestDTO;
 
 public interface CompilationService {
 
-  CompilationDTO save(CompilationRequestDTO body);
+  CompilationDTO save(NewCompilationRequestDTO body);
 
-  CompilationDTO update(Long compId, CompilationRequestDTO body);
+  CompilationDTO update(Long compId, UpdateCompilationRequestDTO body);
 
   void delete(Long compId);
 

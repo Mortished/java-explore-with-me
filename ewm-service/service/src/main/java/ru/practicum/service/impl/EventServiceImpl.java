@@ -135,7 +135,8 @@ public class EventServiceImpl implements EventService {
 
     if (rangeEnd != null) {
       specification = specification.and(
-          (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("eventDate"), rangeEnd));
+          (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("eventDate"),
+              rangeEnd));
 
       if (rangeStart.isAfter(rangeEnd)) {
         throw new ValidationException();
@@ -188,6 +189,9 @@ public class EventServiceImpl implements EventService {
       event.setDescription(body.getDescription());
     }
     if (body.getEventDate() != null) {
+      if (LocalDateTime.now().isAfter(body.getEventDate())) {
+        throw new ValidationException();
+      }
       if (checkEventDate(body.getEventDate())) {
         throw new ConflictException();
       }
@@ -251,9 +255,13 @@ public class EventServiceImpl implements EventService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
 
+    if (LocalDateTime.now().isAfter(body.getEventDate())) {
+      throw new ValidationException();
+    }
     if (checkEventDate(body.getEventDate())) {
       throw new ConflictException();
     }
+
     Category category = categoryRepository.findById(body.getCategory())
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, body.getCategory().toString()));
 

@@ -12,7 +12,8 @@ import ru.practicum.entity.Event;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.model.dto.CompilationDTO;
-import ru.practicum.model.dto.CompilationRequestDTO;
+import ru.practicum.model.dto.NewCompilationRequestDTO;
+import ru.practicum.model.dto.UpdateCompilationRequestDTO;
 import ru.practicum.repository.CompilationRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.service.CompilationService;
@@ -26,7 +27,7 @@ public class CompilationServiceImpl implements CompilationService {
   private final ModelMapper modelMapper;
 
   @Override
-  public CompilationDTO save(CompilationRequestDTO body) {
+  public CompilationDTO save(NewCompilationRequestDTO body) {
     List<Event> events = null;
     if (body.getEvents() != null && !body.getEvents().isEmpty()) {
       events = eventRepository.findAllById(body.getEvents());
@@ -37,7 +38,7 @@ public class CompilationServiceImpl implements CompilationService {
   }
 
   @Override
-  public CompilationDTO update(Long compId, CompilationRequestDTO body) {
+  public CompilationDTO update(Long compId, UpdateCompilationRequestDTO body) {
     Compilation compilation = compilationRepository.findById(compId)
         .orElseThrow(() -> new NotFoundException(COMPILATION_NAME, compId.toString()));
 
@@ -82,7 +83,8 @@ public class CompilationServiceImpl implements CompilationService {
     return modelMapper.map(compilation, CompilationDTO.class);
   }
 
-  private boolean isEventsUpdateRequired(Compilation compilation, CompilationRequestDTO body) {
+  private boolean isEventsUpdateRequired(Compilation compilation,
+      UpdateCompilationRequestDTO body) {
     return body.getEvents() != null && !body.getEvents().stream().sorted()
         .equals(compilation.getEvents().stream()
             .map(Event::getId)
