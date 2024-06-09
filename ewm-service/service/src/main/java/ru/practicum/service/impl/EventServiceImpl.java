@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -100,8 +101,12 @@ public class EventServiceImpl implements EventService {
   @Override
   public List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
-      Integer from, Integer size, HttpServletRequest request) {
+      Integer from, Integer size, HttpServletRequest request
+  ) {
 
+    if (rangeStart.isAfter(rangeEnd)) {
+      throw new ValidationException();
+    }
     Specification<Event> specification = Specification.where(null);
 
     specification = specification.and(

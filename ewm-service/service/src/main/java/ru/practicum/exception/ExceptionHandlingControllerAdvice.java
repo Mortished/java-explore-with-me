@@ -2,6 +2,7 @@ package ru.practicum.exception;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.validation.ValidationException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +67,17 @@ public class ExceptionHandlingControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ErrorResponse handleTypeMismatchExceptions(RuntimeException ex) {
+    return ErrorResponse.builder()
+        .status(HttpStatus.BAD_REQUEST.name())
+        .reason(REQUEST_VALIDATION_REASON)
+        .message(ex.getMessage())
+        .timestamp(LocalDateTime.now().format(formatter))
+        .build();
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(ValidationException.class)
+  public ErrorResponse handleValidationExceptions(ValidationException ex) {
     return ErrorResponse.builder()
         .status(HttpStatus.BAD_REQUEST.name())
         .reason(REQUEST_VALIDATION_REASON)
