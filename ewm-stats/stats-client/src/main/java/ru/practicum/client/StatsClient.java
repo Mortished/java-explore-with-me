@@ -1,6 +1,7 @@
 package ru.practicum.client;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,6 +15,7 @@ import ru.practicum.model.HitDTO;
 public class StatsClient extends BaseClient {
 
   private static final String MAIN_SERVICE_NAME = "ewm-main-service";
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   public StatsClient(RestTemplateBuilder builder) {
     super(builder
@@ -29,32 +31,33 @@ public class StatsClient extends BaseClient {
   }
 
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-    Map<String, Object> parameters = Map.of("start", startDateTime, "end", endDateTime);
+    Map<String, Object> parameters = Map.of("start", startDateTime.format(formatter), "end",
+        endDateTime.format(formatter));
     return get("/stats?start={start}&end={end}", parameters);
   }
 
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
       List<String> uris) {
     Map<String, Object> parameters = Map.of(
-        "start", startDateTime,
-        "end", endDateTime,
+        "start", startDateTime.format(formatter),
+        "end", endDateTime.format(formatter),
         "uris", uris
     );
     return get("/stats?start={start}&end={end}&uris={uris}", parameters);
   }
 
   public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
-      List<String> uris, boolean unique) {
+      String[] uris, boolean unique) {
     Map<String, Object> parameters = Map.of(
-        "start", startDateTime,
-        "end", endDateTime,
+        "start", startDateTime.format(formatter),
+        "end", endDateTime.format(formatter),
         "uris", uris,
         "unique", unique
     );
     return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
   }
 
-  public ResponseEntity<Object> getStats(LocalDateTime startDateTime, LocalDateTime endDateTime,
+  public ResponseEntity<Object> getStats(String startDateTime, String endDateTime,
       boolean unique) {
     Map<String, Object> parameters = Map.of(
         "start", startDateTime,

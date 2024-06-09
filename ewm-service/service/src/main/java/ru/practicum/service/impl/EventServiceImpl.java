@@ -4,6 +4,7 @@ import static ru.practicum.utils.Dictionary.CATEGORY_NAME;
 import static ru.practicum.utils.Dictionary.EVENT_NAME;
 import static ru.practicum.utils.Dictionary.USER_NAME;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatsClient;
 import ru.practicum.entity.Category;
@@ -37,6 +39,7 @@ import ru.practicum.model.dto.EventShortDTO;
 import ru.practicum.model.dto.NewEventDTO;
 import ru.practicum.model.dto.UpdateEventAdminRequestDTO;
 import ru.practicum.model.dto.UpdateEventUserRequestDTO;
+import ru.practicum.model.pojo.EventViewStats;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.UserRepository;
@@ -232,12 +235,22 @@ public class EventServiceImpl implements EventService {
     if (!event.getState().equals(EventStatus.PUBLISHED)) {
       throw new NotFoundException(EVENT_NAME, eventId.toString());
     }
-    event.setViews(event.getViews() + 1);
-    Event result = eventRepository.saveAndFlush(event);
 
-    statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+    String uri = request.getRequestURI();
+    statsClient.hit(uri, request.getRemoteAddr(), LocalDateTime.now());
 
-    return EventMapper.toEventFullDTO(result);
+    ResponseEntity<Object> response = statsClient.getStats(event.getCreatedOn(),
+        event.getEventDate(), new String[]{uri}, true);
+
+    List<EventViewStats> list = objectMapper.readValue(
+        objectMapper.writeValueAsString(response.getBody()), new TypeReference<>() {
+        });
+
+    if (!list.isEmpty()) {
+      event.setViews(list.get(0).getHits());
+    }
+
+    return EventMapper.toEventFullDTO(event);
   }
 
   @Override
