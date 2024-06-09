@@ -2,6 +2,7 @@ package ru.practicum.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
@@ -48,5 +49,7 @@ public class EventFullDTO {
   private String title;
 
   private Long views;
+
+  private List<CommentDTO> comments;
 
 }
