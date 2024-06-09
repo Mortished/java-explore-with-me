@@ -104,9 +104,6 @@ public class EventServiceImpl implements EventService {
       Integer from, Integer size, HttpServletRequest request
   ) {
 
-    if (rangeStart.isAfter(rangeEnd)) {
-      throw new ValidationException();
-    }
     Specification<Event> specification = Specification.where(null);
 
     specification = specification.and(
@@ -138,8 +135,11 @@ public class EventServiceImpl implements EventService {
 
     if (rangeEnd != null) {
       specification = specification.and(
-          (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("eventDate"),
-              rangeEnd));
+          (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("eventDate"), rangeEnd));
+
+      if (rangeStart.isAfter(rangeEnd)) {
+        throw new ValidationException();
+      }
     }
 
     if (onlyAvailable != null && onlyAvailable) {
