@@ -256,12 +256,7 @@ public class EventServiceImpl implements EventService {
 
     event.setInitiator(user);
     event.setCreatedOn(LocalDateTime.now());
-    if (event.isRequestModeration()) {
-      event.setState(EventStatus.PENDING);
-    } else {
-      event.setState(EventStatus.PUBLISHED);
-      event.setPublishedOn(LocalDateTime.now());
-    }
+    event.setState(EventStatus.PENDING);
 
     Event result = eventRepository.saveAndFlush(event);
 
