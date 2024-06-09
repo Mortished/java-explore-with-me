@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -31,7 +32,7 @@ public class NewEventDTO {
 
   private Boolean paid;
 
-  @Positive
+  @PositiveOrZero
   private Integer participantLimit;
 
   private Boolean requestModeration;
