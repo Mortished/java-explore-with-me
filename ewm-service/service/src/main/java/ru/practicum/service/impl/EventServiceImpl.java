@@ -9,12 +9,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.client.StatsClient;
 import ru.practicum.entity.Category;
@@ -56,8 +60,32 @@ public class EventServiceImpl implements EventService {
       List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
       Integer size) {
 
-    List<Event> events = eventRepository.findByAllParams(users, states, categories, rangeStart,
-        rangeEnd, from, size);
+    Specification<Event> specification = Specification.where(null);
+    if (users != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> root.get("initiator").get("id").in(users));
+    }
+    if (states != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> root.get("state").as(String.class).in(states));
+    }
+    if (categories != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> root.get("category").get("id").in(categories));
+    }
+    if (rangeStart != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(
+              root.get("eventDate"), rangeStart));
+    }
+    if (rangeEnd != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
+              rangeEnd));
+    }
+
+    List<Event> events = eventRepository.findAll(specification, PageRequest.of(from / size, size))
+        .getContent();
 
     List<EventFullDTO> result = new ArrayList<>();
 
@@ -72,17 +100,62 @@ public class EventServiceImpl implements EventService {
   @Override
   public List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
-      Integer from, Integer size, HttpServletRequest request
-  ) {
-    String sortBy = sort == null ? null : sort.name();
+      Integer from, Integer size, HttpServletRequest request) {
 
-    List<Event> events = eventRepository.findByAllParams(text, categories, paid, rangeStart,
-        rangeEnd, onlyAvailable, sortBy, from, size);
+    Specification<Event> specification = Specification.where(null);
+
+    specification = specification.and(
+        (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("state"),
+            EventStatus.PUBLISHED));
+
+    if (text != null) {
+      specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")),
+              "%" + text.toLowerCase() + "%"),
+          criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),
+              "%" + text.toLowerCase() + "%")));
+    }
+
+    if (categories != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> root.get("category").get("id").in(categories));
+    }
+
+    if (paid != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("paid"), paid));
+    }
+
+    LocalDateTime startDateTime = Objects.requireNonNullElse(rangeStart, LocalDateTime.now());
+    specification = specification.and(
+        (root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(root.get("eventDate"),
+            startDateTime));
+
+    if (rangeEnd != null) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("eventDate"),
+              rangeEnd));
+    }
+
+    if (onlyAvailable != null && onlyAvailable) {
+      specification = specification.and(
+          (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(
+              root.get("participantLimit"), 0));
+    }
+    PageRequest pageRequest = PageRequest.of(from / size, size);
+    if (sort != null) {
+      if (sort.equals(EventSortType.EVENT_DATE)) {
+        pageRequest.withSort(Sort.by("eventDate"));
+      } else {
+        pageRequest.withSort(Sort.by("views").descending());
+      }
+    }
+
+    List<Event> events = eventRepository.findAll(specification, pageRequest).getContent();
 
     statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
 
-    return events.stream()
-        .map(it -> modelMapper.map(it, EventShortDTO.class))
+    return events.stream().map(it -> modelMapper.map(it, EventShortDTO.class))
         .collect(Collectors.toList());
   }
 
@@ -164,8 +237,7 @@ public class EventServiceImpl implements EventService {
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
 
     return eventRepository.findAllByUserId(userId, from, size).stream()
-        .map(it -> modelMapper.map(it, EventShortDTO.class))
-        .collect(Collectors.toList());
+        .map(it -> modelMapper.map(it, EventShortDTO.class)).collect(Collectors.toList());
   }
 
   @Override
@@ -253,8 +325,9 @@ public class EventServiceImpl implements EventService {
       event.setLocation(objectMapper.writeValueAsString(body.getLocation()));
     }
     if (body.getStateAction() != null) {
-      EventStatus status = body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW)
-          ? EventStatus.CANCELED : EventStatus.PENDING;
+      EventStatus status =
+          body.getStateAction().equals(UserEventRequestStatus.CANCEL_REVIEW) ? EventStatus.CANCELED
+              : EventStatus.PENDING;
       event.setState(status);
     }
 
