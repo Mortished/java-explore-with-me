@@ -88,7 +88,7 @@ public class RequestServiceImpl implements RequestService {
       eventRepository.saveAndFlush(event);
     }
 
-    request.setStatus(EventRequestStatus.REJECTED);
+    request.setStatus(EventRequestStatus.CANCELED);
     Request savedRequest = requestRepository.saveAndFlush(request);
 
     return RequestMapper.toRequestDTO(savedRequest);
@@ -153,7 +153,7 @@ public class RequestServiceImpl implements RequestService {
         request.setStatus(EventRequestStatus.REJECTED);
         requestRepository.saveAndFlush(request);
       });
-      return RequestMapper.toEventRequestStatusUpdateResult(rejectedRequests, confirmedRequests);
+      return RequestMapper.toEventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 
     requests.forEach(request -> {
