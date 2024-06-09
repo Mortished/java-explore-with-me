@@ -52,9 +52,13 @@ public class RequestServiceImpl implements RequestService {
     ) {
       throw new ConflictException();
     }
+
+    EventRequestStatus status = EventRequestStatus.PENDING;
+    if (event.getParticipantLimit().equals(0) || !event.isRequestModeration()) {
+      status = EventRequestStatus.CONFIRMED;
+    }
     Request request = Request.builder()
-        .status(
-            event.isRequestModeration() ? EventRequestStatus.PENDING : EventRequestStatus.CONFIRMED)
+        .status(status)
         .event(event)
         .requester(user)
         .build();
