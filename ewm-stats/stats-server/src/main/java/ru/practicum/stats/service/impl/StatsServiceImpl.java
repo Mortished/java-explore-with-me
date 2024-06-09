@@ -2,6 +2,7 @@ package ru.practicum.stats.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.model.HitDTO;
@@ -23,7 +24,12 @@ public class StatsServiceImpl implements StatsService {
 
   @Override
   public List<IStatsDTO> findHitsByParams(LocalDateTime start, LocalDateTime end, List<String> uris,
-      Boolean unique) {
+      Boolean unique
+  ) {
+    if (start.isAfter(end)) {
+      throw new ValidationException();
+    }
+
     if (uris != null && !uris.isEmpty()) {
       if (unique) {
         return hitsRepository.findDistinctHitsByUris(start, end, uris);
