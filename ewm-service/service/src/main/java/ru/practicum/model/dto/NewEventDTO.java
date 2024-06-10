@@ -1,5 +1,7 @@
 package ru.practicum.model.dto;
 
+import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
@@ -25,7 +27,7 @@ public class NewEventDTO {
   @Length(min = 20, max = 7000)
   private String description;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
   private LocalDateTime eventDate;
 
   private LocationDTO location;

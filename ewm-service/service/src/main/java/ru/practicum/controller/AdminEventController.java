@@ -1,5 +1,7 @@
 package ru.practicum.controller;
 
+import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.Valid;
@@ -33,8 +35,8 @@ public class AdminEventController {
       @RequestParam(required = false) List<Long> users,
       @RequestParam(required = false) List<String> states,
       @RequestParam(required = false) List<Long> categories,
-      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+      @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeStart,
+      @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeEnd,
       @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
       @RequestParam(required = false, defaultValue = "10") @Min(1) Integer size
   ) {
