@@ -52,7 +52,7 @@ public class EventMapper {
         .requestModeration(event.isRequestModeration())
         .state(event.getState().name())
         .title(event.getTitle())
-        .views(event.getViews()) //TODO Откуда берется счетчик?
+        .views(event.getViews())
         .build();
   }
 
