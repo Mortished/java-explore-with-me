@@ -39,7 +39,6 @@ public class CategoryServiceImpl implements CategoryService {
   public void delete(Long catId) {
     categoryRepository.findById(catId)
         .orElseThrow(() -> new NotFoundException(CATEGORY_NAME, catId.toString()));
-    //TODO Проверить удаление с наличием событий - 409 Конфликт
     categoryRepository.deleteById(catId);
   }
 

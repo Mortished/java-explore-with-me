@@ -71,4 +71,15 @@ public class CommentServiceImpl implements CommentService {
     return modelMapper.map(commentRepository.saveAndFlush(comment), CommentDTO.class);
   }
 
+  @Override
+  public void deleteComment(Long eventId, Long commentId) {
+    Event event = eventRepository.findById(eventId)
+        .orElseThrow(() -> new NotFoundException(EVENT_NAME, eventId.toString()));
+
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new NotFoundException(COMMENT_NAME, commentId.toString()));
+
+    commentRepository.deleteById(comment.getId());
+  }
+
 }
