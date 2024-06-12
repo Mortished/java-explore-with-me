@@ -1,5 +1,7 @@
 package ru.practicum.exception;
 
+import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.validation.ValidationException;
@@ -14,7 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class ExceptionHandlingControllerAdvice {
 
-  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
   private static final String OBJECT_NOT_FOUND_REASON = "The required object was not found.";
   private static final String UPDATE_CONFLICT_REASON = "For the requested operation the conditions are not met.";
   private static final String REQUEST_VALIDATION_REASON = "Incorrectly made request.";

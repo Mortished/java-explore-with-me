@@ -1,5 +1,6 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.CustomPageRequest.pageRequestOf;
 import static ru.practicum.utils.Dictionary.USER_NAME;
 
 import java.util.List;
@@ -33,13 +34,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDTO> getUsers(List<Integer> ids, Integer from, Integer size) {
+  public List<UserDTO> getUsers(List<Long> ids, Integer from, Integer size) {
     if (ids == null || ids.isEmpty()) {
-      return userRepository.findAllWithPaging(size, from).stream()
+      return userRepository.findAll(pageRequestOf(from, size)).stream()
           .map(u -> modelMapper.map(u, UserDTO.class))
           .collect(Collectors.toList());
     }
-    return userRepository.findByIdIsIn(ids, size, from).stream()
+    return userRepository.findAllByIdIn(ids, pageRequestOf(from, size)).stream()
         .map(user -> modelMapper.map(user, UserDTO.class))
         .collect(Collectors.toList());
   }

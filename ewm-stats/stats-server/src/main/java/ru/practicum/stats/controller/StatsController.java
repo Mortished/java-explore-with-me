@@ -24,6 +24,7 @@ import ru.practicum.stats.service.StatsService;
 @Slf4j
 public class StatsController {
 
+  private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
   private final StatsService statsService;
 
   /**
@@ -47,8 +48,8 @@ public class StatsController {
    */
   @GetMapping("/stats")
   public List<IStatsDTO> getStats(
-      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+      @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime start,
+      @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime end,
       @RequestParam(required = false) List<String> uris,
       @RequestParam(required = false, defaultValue = "false") Boolean unique
   ) {

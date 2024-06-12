@@ -1,5 +1,7 @@
 package ru.practicum.controller;
 
+import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +34,8 @@ public class PublicEventController {
       @RequestParam(required = false) String text,
       @RequestParam(required = false) List<Long> categories,
       @RequestParam(required = false) Boolean paid,
-      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+      @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeStart,
+      @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeEnd,
       @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
       @RequestParam(required = false) EventSortType sort,
       @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
@@ -48,7 +50,8 @@ public class PublicEventController {
       rangeStart = LocalDateTime.now();
     }
 
-    return eventService.findByParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+    return eventService.findPublicEventsByParams(text, categories, paid, rangeStart, rangeEnd,
+        onlyAvailable,
         sort, from, size, request);
   }
 

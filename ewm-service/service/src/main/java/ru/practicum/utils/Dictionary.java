@@ -9,4 +9,6 @@ public class Dictionary {
   public static final String EVENT_NAME = "Event";
   public static final String USER_NAME = "User";
 
+  public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
 }

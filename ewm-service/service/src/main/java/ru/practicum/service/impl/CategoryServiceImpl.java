@@ -1,5 +1,6 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.CustomPageRequest.pageRequestOf;
 import static ru.practicum.utils.Dictionary.CATEGORY_NAME;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public List<CategoryDTO> findAll(Integer from, Integer size) {
-    return categoryRepository.findAllWithPaging(from, size).stream()
+    return categoryRepository.findAll(pageRequestOf(from, size)).stream()
         .map(it -> modelMapper.map(it, CategoryDTO.class))
         .collect(Collectors.toList());
   }

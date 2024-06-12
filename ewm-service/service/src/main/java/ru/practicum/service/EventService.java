@@ -12,10 +12,11 @@ import ru.practicum.model.dto.UpdateEventUserRequestDTO;
 
 public interface EventService {
 
-  List<EventFullDTO> findByParams(List<Long> users, List<String> states, List<Long> categories,
+  List<EventFullDTO> findAdminEventsByParams(List<Long> users, List<String> states,
+      List<Long> categories,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
-  List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
+  List<EventShortDTO> findPublicEventsByParams(String text, List<Long> categories, Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
       Integer from, Integer size, HttpServletRequest request);
 

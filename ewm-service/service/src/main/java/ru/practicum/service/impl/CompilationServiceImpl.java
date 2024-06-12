@@ -1,5 +1,6 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.CustomPageRequest.pageRequestOf;
 import static ru.practicum.utils.Dictionary.COMPILATION_NAME;
 
 import java.util.List;
@@ -67,11 +68,11 @@ public class CompilationServiceImpl implements CompilationService {
   @Override
   public List<CompilationDTO> findAllWithParams(Boolean pinned, Integer from, Integer size) {
     if (pinned != null) {
-      return compilationRepository.findAllWithParams(pinned, from, size).stream()
+      return compilationRepository.findAllByPinned(pinned, pageRequestOf(from, size)).stream()
           .map(it -> modelMapper.map(it, CompilationDTO.class))
           .collect(Collectors.toList());
     }
-    return compilationRepository.findAllWithPaging(from, size).stream()
+    return compilationRepository.findAll(pageRequestOf(from, size)).stream()
         .map(it -> modelMapper.map(it, CompilationDTO.class))
         .collect(Collectors.toList());
   }
