@@ -44,7 +44,7 @@ public class AdminUserController {
 
   @GetMapping
   public List<UserDTO> getUsers(
-      @RequestParam(required = false) final List<Integer> ids,
+      @RequestParam(required = false) final List<Long> ids,
       @RequestParam(defaultValue = "0") @Min(0) final Integer from,
       @RequestParam(defaultValue = "10") @Min(1) final Integer size
   ) {

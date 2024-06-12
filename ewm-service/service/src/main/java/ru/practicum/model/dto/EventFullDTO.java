@@ -4,8 +4,6 @@ import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,10 +11,8 @@ import lombok.Data;
 @Builder
 public class EventFullDTO {
 
-  @NotEmpty
   private String annotation;
 
-  @NotNull
   private CategoryDTO category;
 
   private Integer confirmedRequests;
@@ -46,7 +42,6 @@ public class EventFullDTO {
 
   private String state;
 
-  @NotEmpty
   private String title;
 
   private Long views;

@@ -1,5 +1,6 @@
 package ru.practicum.service.impl;
 
+import static ru.practicum.utils.CustomPageRequest.pageRequestOf;
 import static ru.practicum.utils.Dictionary.CATEGORY_NAME;
 import static ru.practicum.utils.Dictionary.EVENT_NAME;
 import static ru.practicum.utils.Dictionary.USER_NAME;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +63,7 @@ public class EventServiceImpl implements EventService {
 
   @Override
   @SneakyThrows
-  public List<EventFullDTO> findByParams(List<Long> users, List<String> states,
+  public List<EventFullDTO> findAdminEventsByParams(List<Long> users, List<String> states,
       List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
       Integer size) {
 
@@ -102,7 +105,9 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public List<EventShortDTO> findByParams(String text, List<Long> categories, Boolean paid,
+  @SneakyThrows
+  public List<EventShortDTO> findPublicEventsByParams(String text, List<Long> categories,
+      Boolean paid,
       LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSortType sort,
       Integer from, Integer size, HttpServletRequest request
   ) {
@@ -151,18 +156,31 @@ public class EventServiceImpl implements EventService {
           (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(
               root.get("participantLimit"), 0));
     }
-    PageRequest pageRequest = PageRequest.of(from / size, size);
+    PageRequest pageRequest = pageRequestOf(from, size);
     if (sort != null) {
       if (sort.equals(EventSortType.EVENT_DATE)) {
-        pageRequest.withSort(Sort.by("eventDate"));
+        pageRequest = pageRequestOf(from, size, Sort.by("eventDate"));
       } else {
-        pageRequest.withSort(Sort.by("views").descending());
+        pageRequest = pageRequestOf(from, size, Sort.by("views").descending());
       }
     }
 
     List<Event> events = eventRepository.findAll(specification, pageRequest).getContent();
 
     statsClient.hit(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+
+    ResponseEntity<Object> response = getEventsViewStats(events);
+
+    List<EventViewStats> list = objectMapper.readValue(
+        objectMapper.writeValueAsString(response.getBody()),
+        new TypeReference<>() {
+        });
+
+    Map<Long, Long> eventsHits = getEventsHits(list);
+
+    for (Event event : events) {
+      event.setViews(eventsHits.get(event.getId()));
+    }
 
     return events.stream().map(it -> modelMapper.map(it, EventShortDTO.class))
         .collect(Collectors.toList());
@@ -258,8 +276,9 @@ public class EventServiceImpl implements EventService {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(USER_NAME, userId.toString()));
 
-    return eventRepository.findAllByUserId(userId, from, size).stream()
-        .map(it -> modelMapper.map(it, EventShortDTO.class)).collect(Collectors.toList());
+    return eventRepository.findAllByInitiatorId(userId, pageRequestOf(from, size)).stream()
+        .map(it -> modelMapper.map(it, EventShortDTO.class))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -363,6 +382,36 @@ public class EventServiceImpl implements EventService {
 
   private boolean checkEventDate(LocalDateTime eventDate) {
     return Duration.between(LocalDateTime.now(), eventDate).toHours() < 2L;
+  }
+
+  private ResponseEntity<Object> getEventsViewStats(List<Event> events) {
+    String[] uri = getStatsUrisByEvents(events);
+    LocalDateTime start = getStartDateTimeForStatsView(events);
+    return statsClient.getStats(start, LocalDateTime.now(), uri, true);
+  }
+
+  private LocalDateTime getStartDateTimeForStatsView(List<Event> events) {
+    return events.stream()
+        .map(Event::getCreatedOn)
+        .sorted()
+        .findFirst()
+        .orElseThrow();
+  }
+
+  private String[] getStatsUrisByEvents(List<Event> events) {
+    return events.stream()
+        .map(it -> "/events/" + it.getId())
+        .toArray(String[]::new);
+  }
+
+  private Map<Long, Long> getEventsHits(List<EventViewStats> list) {
+    Map<Long, Long> hits = new HashMap<>();
+    for (EventViewStats eventViewStats : list) {
+      String[] temp = eventViewStats.getUri().split("/");
+      Long eventId = Long.parseLong(temp[temp.length - 1]);
+      hits.put(eventId, eventViewStats.getHits());
+    }
+    return hits;
   }
 
 }

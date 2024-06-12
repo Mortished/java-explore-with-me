@@ -50,7 +50,8 @@ public class PublicEventController {
       rangeStart = LocalDateTime.now();
     }
 
-    return eventService.findByParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+    return eventService.findPublicEventsByParams(text, categories, paid, rangeStart, rangeEnd,
+        onlyAvailable,
         sort, from, size, request);
   }
 

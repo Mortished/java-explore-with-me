@@ -43,7 +43,8 @@ public class AdminEventController {
     log.info(
         "GET /admin/events: users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
         users, states, categories, rangeStart, rangeEnd, from, size);
-    return eventService.findByParams(users, states, categories, rangeStart, rangeEnd, from, size);
+    return eventService.findAdminEventsByParams(users, states, categories, rangeStart, rangeEnd,
+        from, size);
   }
 
   @PatchMapping("/{eventId}")
