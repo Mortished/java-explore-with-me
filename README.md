@@ -67,3 +67,6 @@ API для работы с подборками событий
 - `POST /admin/compilations` - Добавление новой подборки (подборка может не содержать событий)
 - `DELETE /admin/compilations/{compId}` - Удаление подборки
 - `PATCH /admin/compilations/{compId}` - Обновить информацию о подборке
+
+### 5. Реализована фича - Комментарии
+https://github.com/Mortished/java-explore-with-me/pull/3
