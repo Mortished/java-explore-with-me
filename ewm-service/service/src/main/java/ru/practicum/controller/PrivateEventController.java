@@ -89,7 +89,7 @@ public class PrivateEventController {
 
   @PostMapping("/{userId}/events/{eventId}/comment")
   @ResponseStatus(HttpStatus.CREATED)
-  CommentDTO createComment(
+  public CommentDTO createComment(
       @PathVariable("userId") Long userId,
       @PathVariable("eventId") Long eventId,
       @Valid @RequestBody NewCommentDTO comment
@@ -99,7 +99,7 @@ public class PrivateEventController {
   }
 
   @PatchMapping("/{userId}/events/{eventId}/comment/{commentId}")
-  CommentDTO updateComment(
+  public CommentDTO updateComment(
       @PathVariable("userId") Long userId,
       @PathVariable("eventId") Long eventId,
       @PathVariable("commentId") Long commentId,

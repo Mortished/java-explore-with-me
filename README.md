@@ -69,4 +69,6 @@ API для работы с подборками событий
 - `PATCH /admin/compilations/{compId}` - Обновить информацию о подборке
 
 ### 5. Реализована фича - Комментарии
-https://github.com/Mortished/java-explore-with-me/pull/3
+- `POST /users/{userId}/events/{eventId}/comment` - Добавление комментария
+- `PATCH /users/{userId}/events/{eventId}/comment/{commentId}` - Изменение комментария
+- `DELETE /admin/events/{eventId}/comment/{commentId}/delete` - Удаление комментария
