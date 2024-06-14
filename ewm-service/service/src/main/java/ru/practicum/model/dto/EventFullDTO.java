@@ -4,6 +4,7 @@ import static ru.practicum.utils.Dictionary.DATE_TIME_PATTERN;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -45,5 +46,7 @@ public class EventFullDTO {
   private String title;
 
   private Long views;
+
+  private List<CommentDTO> comments;
 
 }

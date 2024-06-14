@@ -2,11 +2,14 @@ package ru.practicum.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.practicum.entity.Category;
 import ru.practicum.entity.Event;
 import ru.practicum.model.dto.CategoryDTO;
+import ru.practicum.model.dto.CommentDTO;
 import ru.practicum.model.dto.EventFullDTO;
 import ru.practicum.model.dto.LocationDTO;
 import ru.practicum.model.dto.NewEventDTO;
@@ -53,6 +56,10 @@ public class EventMapper {
         .state(event.getState().name())
         .title(event.getTitle())
         .views(event.getViews())
+        .comments(
+            event.getComments() == null ? Collections.emptyList() : event.getComments().stream()
+                .map(it -> modelMapper.map(it, CommentDTO.class))
+                .collect(Collectors.toList()))
         .build();
   }
 

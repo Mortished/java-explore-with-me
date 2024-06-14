@@ -16,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.model.dto.CommentDTO;
 import ru.practicum.model.dto.EventFullDTO;
 import ru.practicum.model.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.model.dto.EventRequestStatusUpdateResult;
 import ru.practicum.model.dto.EventShortDTO;
+import ru.practicum.model.dto.NewCommentDTO;
 import ru.practicum.model.dto.NewEventDTO;
 import ru.practicum.model.dto.ParticipationRequestDto;
 import ru.practicum.model.dto.UpdateEventUserRequestDTO;
+import ru.practicum.service.CommentService;
 import ru.practicum.service.EventService;
 import ru.practicum.service.RequestService;
 
@@ -35,6 +38,7 @@ public class PrivateEventController {
 
   private final EventService eventService;
   private final RequestService requestService;
+  private final CommentService commentService;
 
   @GetMapping("/{userId}/events")
   public List<EventShortDTO> findEventsByUser(@PathVariable Long userId,
@@ -81,6 +85,28 @@ public class PrivateEventController {
     log.info("PATCH /users/{userId}/events/{eventId}/requests: userId={}, eventId={}, body={}",
         userId, eventId, body);
     return requestService.updateRequestsByUserEvent(userId, eventId, body);
+  }
+
+  @PostMapping("/{userId}/events/{eventId}/comment")
+  @ResponseStatus(HttpStatus.CREATED)
+  public CommentDTO createComment(
+      @PathVariable("userId") Long userId,
+      @PathVariable("eventId") Long eventId,
+      @Valid @RequestBody NewCommentDTO comment
+  ) {
+    log.info("POST /users/{}/events/{}/comment : text={}", userId, eventId, comment);
+    return commentService.createComment(userId, eventId, comment);
+  }
+
+  @PatchMapping("/{userId}/events/{eventId}/comment/{commentId}")
+  public CommentDTO updateComment(
+      @PathVariable("userId") Long userId,
+      @PathVariable("eventId") Long eventId,
+      @PathVariable("commentId") Long commentId,
+      @Valid @RequestBody NewCommentDTO comment
+  ) {
+    log.info("POST /users/{}/events/{}/comment/{} : text={}", userId, eventId, commentId, comment);
+    return commentService.updateComment(userId, eventId, commentId, comment);
   }
 
 }

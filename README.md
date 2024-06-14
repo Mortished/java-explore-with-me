@@ -67,3 +67,8 @@ API для работы с подборками событий
 - `POST /admin/compilations` - Добавление новой подборки (подборка может не содержать событий)
 - `DELETE /admin/compilations/{compId}` - Удаление подборки
 - `PATCH /admin/compilations/{compId}` - Обновить информацию о подборке
+
+### 5. Реализована фича - Комментарии
+- `POST /users/{userId}/events/{eventId}/comment` - Добавление комментария
+- `PATCH /users/{userId}/events/{eventId}/comment/{commentId}` - Изменение комментария
+- `DELETE /admin/events/{eventId}/comment/{commentId}/delete` - Удаление комментария
